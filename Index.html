@@ -1,0 +1,1185 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Torneo 2026 -- Liga 5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070d0a;--surface:#0e1a13;--surface2:#162219;--border:#1e3028;
+  --green:#00e664;--green-dim:#00a848;--green-glow:rgba(0,230,100,.12);
+  --yellow:#f5c518;--red:#ff4444;--blue:#4da6ff;--orange:#ff7744;--purple:#b06dff;
+  --text:#e8f5ed;--muted:#5a7a65;
+  --font-d:'Bebas Neue',sans-serif;--font-b:'DM Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--text);font-family:var(--font-b);min-height:100vh;font-size:15px}
+#loading-screen{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:16px}
+#loading-screen.hidden{display:none}
+.loader-title{font-family:var(--font-d);font-size:36px;letter-spacing:3px;color:var(--green)}
+.loader-sub{font-size:13px;color:var(--muted)}
+.spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* LOGIN */
+#login-screen{display:none;position:fixed;inset:0;background:var(–bg);z-index:500;overflow-y:auto}
+#login-screen.show{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px}
+.login-box{width:100%;max-width:320px}
+.login-logo{font-family:var(–font-d);font-size:40px;letter-spacing:3px;color:var(–green);text-align:center;margin-bottom:4px}
+.login-tagline{font-size:11px;color:var(–muted);text-align:center;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:24px}
+.login-tabs{display:flex;border:1px solid var(–border);border-radius:10px;overflow:hidden;margin-bottom:16px}
+.login-tab{flex:1;padding:10px;border:none;background:var(–surface2);color:var(–muted);font-family:var(–font-b);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:.5px}
+.login-tab.active{background:var(–green);color:#000}
+.login-card{background:var(–surface);border:1px solid var(–border);border-radius:12px;padding:20px}
+.login-step{display:none}.login-step.active{display:block}
+.step-back{background:transparent;border:none;color:var(–muted);font-size:13px;cursor:pointer;padding:0 0 12px;display:flex;align-items:center;gap:4px;font-family:var(–font-b)}
+.pin-title{text-align:center;font-size:14px;color:var(–muted);margin-bottom:4px}
+.pin-dots{display:flex;justify-content:center;gap:14px;margin:16px 0}
+.pin-dot{width:18px;height:18px;border-radius:50%;border:2px solid var(–border);background:transparent;transition:all .15s}
+.pin-error{color:var(–red);font-size:12px;text-align:center;min-height:18px;margin-bottom:6px}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px}
+.np-btn{background:var(–surface2);border:1px solid var(–border);border-radius:12px;color:var(–text);font-family:var(–font-d);font-size:26px;padding:16px 8px;cursor:pointer;transition:background .1s,transform .1s;letter-spacing:1px;user-select:none;touch-action:manipulation}
+.np-btn:active{background:var(–border);transform:scale(.93)}
+.np-btn.del{font-size:20px;color:var(–muted);font-family:var(–font-b)}
+.np-btn.empty{background:transparent;border-color:transparent;pointer-events:none}
+.first-note{background:rgba(0,230,100,.07);border:1px solid rgba(0,230,100,.2);border-radius:8px;padding:10px 12px;font-size:12px;color:var(–muted);line-height:1.6;margin-bottom:12px}
+.first-note strong{color:var(–green)}
+.admin-note{font-size:11px;color:var(–muted);text-align:center;margin-top:10px}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+.shake{animation:shake .35s ease}
+
+#offline-banner{display:none;background:rgba(245,197,24,.12);border-bottom:1px solid rgba(245,197,24,.3);text-align:center;padding:8px;font-size:12px;color:var(–yellow)}
+
+/* HEADER */
+.app-header{background:var(–surface);border-bottom:1px solid var(–border);padding:10px 14px 0;position:sticky;top:0;z-index:100}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.app-title{font-family:var(–font-d);font-size:20px;letter-spacing:2px;color:var(–green)}
+.app-title span{color:var(–text)}
+.user-info{display:flex;align-items:center;gap:7px}
+.user-chip{background:var(–surface2);border:1px solid var(–border);border-radius:20px;padding:3px 10px 3px 7px;display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer;transition:border-color .2s}
+.user-chip:hover{border-color:var(–green)}
+.udot{width:6px;height:6px;border-radius:50%;background:var(–green);flex-shrink:0}
+.udot.admin{background:var(–yellow)}
+.logout-btn{background:transparent;border:none;color:var(–muted);cursor:pointer;font-size:16px;padding:2px}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(–green);box-shadow:0 0 6px var(–green);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
+.sync-dot.offline{background:var(–red);box-shadow:0 0 6px var(–red);animation:none}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.tabs{display:flex;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{position:relative;padding:8px 10px;border:none;background:transparent;color:var(–muted);font-family:var(–font-b);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:color .2s,border-color .2s;text-transform:uppercase;letter-spacing:.4px}
+.tab.active{color:var(–green);border-bottom-color:var(–green)}
+.tab:hover:not(.active){color:var(–text)}
+.tab-badge{position:absolute;top:4px;right:1px;width:8px;height:8px;border-radius:50%;background:var(–red);border:1px solid var(–bg);display:none}
+.tab-badge.show{display:block}
+
+.content{padding:14px;max-width:600px;margin:0 auto}
+.section{display:none}.section.active{display:block}
+.card{background:var(–surface);border:1px solid var(–border);border-radius:12px;padding:14px;margin-bottom:12px}
+.card-title{font-family:var(–font-d);font-size:18px;letter-spacing:1px;color:var(–green);margin-bottom:12px}
+
+/* TABLE */
+.standings-table{width:100%;border-collapse:collapse}
+.standings-table th{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(–muted);padding:4px;text-align:center;border-bottom:1px solid var(–border)}
+.standings-table th:nth-child(2){text-align:left}
+.standings-table td{padding:7px 4px;text-align:center;border-bottom:1px solid #111c15;font-size:12px;vertical-align:middle}
+.standings-table td:nth-child(2){text-align:left}
+.standings-table tr:last-child td{border-bottom:none}
+.standings-table tbody tr:hover{background:var(–surface2)}
+.zone-top{border-left:3px solid var(–green)}.zone-mid{border-left:3px solid transparent}
+.zone-rel{border-left:3px solid var(–red)}.zone-dis{border-left:3px solid #333;opacity:.5}
+.pos-num{font-family:var(–font-d);font-size:16px}
+.pts-bold{font-family:var(–font-d);font-size:18px;color:var(–green)}.pts-neg{color:var(–red)!important}
+.badge{font-size:9px;font-weight:700;padding:1px 5px;border-radius:10px;letter-spacing:.4px;display:inline-block}
+.badge-dis{background:#333;color:#aaa}.badge-mvp{background:var(–yellow);color:#000}.badge-rot{background:#1a3a6a;color:var(–blue);border:1px solid #2a5090}
+.streak-chip{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:4px;margin:0 1px;font-size:9px;font-weight:800;font-family:var(–font-b)}
+.streak-chip.streak-W{background:rgba(0,230,100,.18);color:var(–green);border:1px solid rgba(0,230,100,.4)}
+.streak-chip.streak-L{background:rgba(255,68,68,.18);color:var(–red);border:1px solid rgba(255,68,68,.4)}
+.streak-chip.streak-D{background:rgba(245,197,24,.13);color:var(–yellow);border:1px solid rgba(245,197,24,.35)}
+.streak-chip.streak-B{background:rgba(77,166,255,.15);color:var(–blue);border:1px solid rgba(77,166,255,.4)}
+.player-title{display:inline-flex;align-items:center;gap:3px;font-size:9px;background:rgba(176,109,255,.1);border:1px solid rgba(176,109,255,.3);color:var(–purple);border-radius:7px;padding:1px 5px;margin-left:3px;vertical-align:middle}
+.achievement-chip{display:inline-flex;align-items:center;gap:2px;font-size:10px;background:rgba(245,197,24,.1);border:1px solid rgba(245,197,24,.2);color:var(–yellow);border-radius:7px;padding:1px 5px}
+.funny-box{background:linear-gradient(135deg,rgba(0,230,100,.05),rgba(77,166,255,.05));border:1px solid rgba(0,230,100,.18);border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:13px;color:var(–muted);line-height:1.65;font-style:italic}
+.funny-box strong{color:var(–text);font-style:normal}
+.funny-box2{background:linear-gradient(135deg,rgba(176,109,255,.05),rgba(255,119,68,.05));border:1px solid rgba(176,109,255,.18);border-radius:10px;padding:12px 14px;margin-top:8px;font-size:13px;color:var(–muted);line-height:1.65;font-style:italic}
+.funny-box2 strong{color:var(–text);font-style:normal}
+
+/* FORMS */
+.form-group{margin-bottom:12px}
+.form-label{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(–muted);margin-bottom:5px;display:block}
+.form-input{width:100%;background:var(–surface2);border:1px solid var(–border);border-radius:8px;color:var(–text);font-family:var(–font-b);font-size:14px;padding:9px 12px;outline:none;transition:border-color .2s}
+.form-input:focus{border-color:var(–green)}.form-input::placeholder{color:var(–muted)}
+select.form-input{cursor:pointer}select.form-input option{background:#0e1a13}
+textarea.form-input{resize:vertical;min-height:72px;font-size:14px}
+.score-row{display:grid;grid-template-columns:1fr 40px 18px 40px 1fr;gap:5px;align-items:center;margin-bottom:12px}
+.score-input{text-align:center;font-family:var(–font-d);font-size:26px;padding:5px 0}
+.score-dash{font-family:var(–font-d);font-size:22px;color:var(–muted);text-align:center}
+.assign-row{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:8px;border:1px solid var(–border);background:var(–surface2);margin-bottom:5px;transition:all .2s}
+.assign-row.status-A{border-color:rgba(77,166,255,.4);background:rgba(77,166,255,.06)}
+.assign-row.status-B{border-color:rgba(255,119,68,.4);background:rgba(255,119,68,.06)}
+.assign-row.status-bench{border-color:rgba(0,230,100,.3);background:rgba(0,230,100,.05)}
+.assign-row.status-absJust{border-color:rgba(245,197,24,.2);background:rgba(245,197,24,.04)}
+.assign-row.status-absUnjust{border-color:rgba(255,68,68,.3);background:rgba(255,68,68,.05)}
+.assign-name{font-weight:500;font-size:13px}.assign-sub{font-size:10px;color:var(–muted)}
+.assign-select{background:var(–bg);border:1px solid var(–border);border-radius:6px;color:var(–text);font-family:var(–font-b);font-size:12px;padding:4px 6px;outline:none;cursor:pointer;min-width:135px}
+.assign-select option{background:#0a1510}
+
+/* BUTTONS */
+.btn{padding:9px 16px;border-radius:8px;border:none;font-family:var(–font-b);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;touch-action:manipulation}
+.btn-primary{background:var(–green);color:#000}.btn-primary:hover{background:#00ff77}.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-ghost{background:transparent;color:var(–muted);border:1px solid var(–border)}.btn-ghost:hover{border-color:var(–muted);color:var(–text)}
+.btn-danger{background:transparent;color:var(–red);border:1px solid #2a1010}.btn-danger:hover{background:#2a1010}
+.btn-yellow{background:var(–yellow);color:#000}.btn-purple{background:var(–purple);color:#fff}
+.btn-wa{background:#25D366;color:#fff}
+.btn-sm{padding:4px 10px;font-size:11px}.btn-full{width:100%}
+
+/* VOTE */
+.vote-card{background:var(–surface);border:1px solid var(–border);border-radius:12px;padding:14px;margin-bottom:12px}
+.vote-card.voted{border-color:rgba(0,230,100,.2);opacity:.75}
+.vote-card.not-eligible{opacity:.5}
+.vote-score{font-family:var(–font-d);font-size:22px}
+.vp{display:flex;align-items:center;gap:8px;margin-top:6px}
+.vp-bar{flex:1;height:4px;background:var(–border);border-radius:2px;overflow:hidden}
+.vp-fill{height:100%;background:var(–green);border-radius:2px;transition:width .3s}
+.vp-lbl{font-size:11px;color:var(–muted);white-space:nowrap}
+.vr-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.vr-item{background:var(–surface2);border:1px solid var(–border);border-radius:8px;padding:8px;text-align:center}
+.vr-label{font-size:10px;text-transform:uppercase;color:var(–muted);letter-spacing:.4px;margin-bottom:3px}
+
+/* NEWS */
+.news-card{background:var(–surface);border:1px solid var(–border);border-radius:12px;padding:14px;margin-bottom:12px}
+.news-badge{font-size:10px;color:var(–muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.news-score{font-family:var(–font-d);font-size:26px;margin-bottom:8px}
+.news-article{font-size:13px;color:var(–muted);line-height:1.78}
+.news-article strong{color:var(–text)}
+.news-generating{display:flex;align-items:center;gap:8px;color:var(–muted);font-size:13px;padding:10px 0}
+.news-gen-spinner{width:15px;height:15px;border:2px solid var(–border);border-top-color:var(–green);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+
+/* CHAT */
+.chat-section{display:flex;flex-direction:column;height:calc(100vh - 158px);max-height:600px}
+.chat-messages{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:5px;scroll-behavior:smooth;padding:2px 0 6px}
+.chat-messages::-webkit-scrollbar{width:3px}
+.chat-messages::-webkit-scrollbar-thumb{background:var(–border);border-radius:2px}
+.chat-msg{display:flex;flex-direction:column;max-width:82%}
+.chat-msg.mine{align-self:flex-end;align-items:flex-end}
+.chat-msg.theirs{align-self:flex-start;align-items:flex-start}
+.chat-bubble{padding:8px 12px;border-radius:14px;font-size:14px;line-height:1.45;word-break:break-word;white-space:pre-wrap}
+.chat-msg.mine .chat-bubble{background:var(–green);color:#000;border-bottom-right-radius:4px}
+.chat-msg.theirs .chat-bubble{background:var(–surface2);border:1px solid var(–border);border-bottom-left-radius:4px}
+.chat-meta{font-size:10px;color:var(–muted);margin-top:2px;display:flex;align-items:center;gap:5px}
+.chat-author-wrap{display:flex;align-items:center;gap:4px;margin-bottom:2px}
+.chat-author{font-weight:700;color:var(–text);font-size:11px}
+.chat-del-btn{background:transparent;border:none;color:transparent;cursor:pointer;font-size:11px;padding:0}
+.chat-msg:hover .chat-del-btn{color:var(–muted)}
+.chat-del-btn:hover{color:var(–red)!important}
+.chat-date-sep{text-align:center;font-size:10px;color:var(–muted);text-transform:uppercase;letter-spacing:.5px;margin:7px 0 3px;padding:0 40px;position:relative}
+.chat-date-sep::before,.chat-date-sep::after{content:'';position:absolute;top:50%;width:22%;height:1px;background:var(–border)}
+.chat-date-sep::before{left:0}.chat-date-sep::after{right:0}
+.chat-bottom{border-top:1px solid var(–border);padding-top:8px;margin-top:4px}
+.emoji-panel{display:none;flex-wrap:wrap;gap:3px;padding:8px;background:var(–surface);border:1px solid var(–border);border-radius:10px;margin-bottom:7px;max-height:140px;overflow-y:auto}
+.emoji-panel.open{display:flex}
+.emoji-btn{background:transparent;border:none;font-size:19px;cursor:pointer;padding:2px;border-radius:5px;line-height:1}
+.emoji-btn:hover{background:var(–surface2)}
+.chat-input-row{display:flex;gap:7px;align-items:flex-end}
+.chat-input-wrap{flex:1;position:relative}
+.chat-input{width:100%;background:var(–surface2);border:1px solid var(–border);border-radius:20px;color:var(–text);font-family:var(–font-b);font-size:14px;padding:9px 40px 9px 13px;outline:none;transition:border-color .2s;resize:none;max-height:95px;overflow-y:auto}
+.chat-input:focus{border-color:var(–green)}
+.chat-input::placeholder{color:var(–muted)}
+.emoji-toggle{position:absolute;right:9px;bottom:8px;background:transparent;border:none;font-size:17px;cursor:pointer;color:var(–muted);line-height:1}
+.emoji-toggle:hover{color:var(–text)}
+.chat-send{background:var(–green);border:none;border-radius:50%;width:40px;height:40px;color:#000;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .2s;align-self:flex-end}
+.chat-send:hover{background:#00ff77}
+.chat-send:disabled{opacity:.4;cursor:not-allowed}
+
+/* MISC */
+.week-banner{background:linear-gradient(135deg,var(–surface) 0%,#0a1a0e 100%);border:1px solid var(–border);border-radius:12px;padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.week-num{font-family:var(–font-d);font-size:38px;color:var(–green);line-height:1}
+.rot-alert{background:rgba(77,166,255,.08);border:1px solid rgba(77,166,255,.3);border-radius:10px;padding:9px 12px;margin-bottom:10px;display:flex;align-items:center;gap:8px;font-size:13px}
+.abs-alert{background:rgba(255,68,68,.07);border:1px solid rgba(255,68,68,.25);border-radius:10px;padding:9px 12px;margin-bottom:6px;font-size:13px}
+.info-alert{background:rgba(77,166,255,.06);border:1px solid rgba(77,166,255,.2);border-radius:10px;padding:9px 12px;margin-bottom:10px;font-size:13px;color:var(–muted)}
+.rule-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.rule-pill{background:var(–surface2);border:1px solid var(–border);border-radius:8px;padding:9px 10px;text-align:center}
+.rule-pill .val{font-family:var(–font-d);font-size:20px}.rule-pill .lbl{font-size:10px;text-transform:uppercase;color:var(–muted);letter-spacing:.4px;margin-top:2px}
+.rule-pill.pos .val{color:var(–green)}.rule-pill.neg .val{color:var(–red)}
+.player-grid{display:flex;flex-direction:column;gap:6px}
+.player-row{display:flex;align-items:center;gap:8px;background:var(–surface2);border:1px solid var(–border);border-radius:8px;padding:8px 11px}
+.player-avatar{width:30px;height:30px;background:var(–green-glow);border:1px solid var(–green-dim);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(–font-d);font-size:13px;color:var(–green);flex-shrink:0}
+.stat-mini{display:flex;gap:3px;flex-wrap:wrap;margin-top:3px}
+.stat-pill{font-size:10px;padding:1px 6px;border-radius:20px;background:var(–surface);border:1px solid var(–border);color:var(–muted)}
+.stat-pill strong{color:var(–text)}.stat-pill.good strong{color:var(–green)}.stat-pill.warn strong{color:var(–yellow)}.stat-pill.danger strong{color:var(–red)}
+.match-card{background:var(–surface2);border:1px solid var(–border);border-radius:10px;padding:11px 13px;margin-bottom:9px}
+.match-card.voting-open{border-color:rgba(255,200,0,.25)}
+.match-date{font-size:10px;color:var(–muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px}
+.match-score-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px}
+.mtn{font-weight:700;font-size:13px;flex:1}.msn{font-family:var(–font-d);font-size:24px;min-width:20px;text-align:center}.mss{font-family:var(–font-d);font-size:18px;color:var(–muted)}
+.match-extras{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px}
+.pill{font-size:10px;padding:2px 7px;border-radius:10px}
+.pill-bench{background:rgba(0,230,100,.08);border:1px solid rgba(0,230,100,.2);color:var(–green)}
+.pill-abs{background:rgba(255,68,68,.06);border:1px solid rgba(255,68,68,.15);color:#ff9999}
+.pill-just{border:1px solid var(–border);color:var(–muted)}
+.pill-vote{background:rgba(0,230,100,.08);border:1px solid rgba(0,230,100,.2);color:var(–green)}
+.pill-pending{background:rgba(255,200,0,.1);border:1px solid rgba(255,200,0,.25);color:var(–yellow)}
+.mpd{font-size:12px;color:var(–muted);line-height:1.7}
+.just-bubble{display:flex;align-items:flex-start;gap:7px;background:var(–surface);border:1px solid var(–border);border-left:3px solid var(–green-dim);border-radius:8px;padding:9px 11px;margin:4px 0}
+.just-text{flex:1;font-size:13px;color:var(–muted);font-style:italic;line-height:1.5}
+.just-del{background:transparent;border:none;color:transparent;cursor:pointer;font-size:13px;padding:0 3px;border-radius:4px}
+.just-bubble:hover .just-del{color:var(–muted)}
+.just-del:hover{color:var(–red)!important}
+.trophy-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.trophy-card{background:var(–surface2);border:1px solid var(–border);border-radius:10px;padding:9px 11px;display:flex;align-items:center;gap:8px}
+.trophy-icon{font-size:20px;flex-shrink:0}
+.trophy-label{font-size:12px;font-weight:600}
+.trophy-who{font-size:10px;color:var(–muted);margin-top:1px}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.section-title{font-family:var(–font-d);font-size:20px;letter-spacing:1px}
+.divider{border:none;border-top:1px solid var(–border);margin:12px 0}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.87);z-index:300;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto}
+.modal-overlay.open{display:flex}
+.modal{background:var(–surface);border:1px solid var(–border);border-radius:14px;padding:18px;width:100%;max-width:480px;margin:auto}
+.modal-title{font-family:var(–font-d);font-size:20px;letter-spacing:1px;color:var(–green);margin-bottom:12px}
+.modal-actions{display:flex;gap:8px;margin-top:14px}.modal-actions .btn{flex:1}
+.wa-preview{background:var(–surface2);border:1px solid var(–border);border-radius:8px;padding:12px;font-size:12px;line-height:1.7;color:var(–muted);white-space:pre-wrap;margin-top:10px;max-height:260px;overflow-y:auto}
+.wa-preview strong{color:var(–text)}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(100px);background:var(–green);color:#000;font-weight:700;font-size:13px;padding:9px 20px;border-radius:50px;z-index:999;transition:transform .35s cubic-bezier(0.34,1.56,0.64,1);white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}.toast.error{background:var(–red);color:#fff}
+.empty-state{text-align:center;padding:30px 20px;color:var(–muted)}
+.empty-state-icon{font-size:32px;margin-bottom:8px}.empty-state p{font-size:14px;line-height:1.6}
+@media(max-width:380px){.assign-select{min-width:108px;font-size:11px}.score-row{grid-template-columns:1fr 36px 14px 36px 1fr}.vr-grid{grid-template-columns:1fr}.trophy-grid{grid-template-columns:1fr}}
+</style>
+
+</head>
+<body>
+
+<div id="loading-screen"><div class="loader-title">⚽ LIGA 5</div><div class="spinner"></div><div class="loader-sub">Conectando con la nube...</div></div>
+
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">⚽ LIGA 5</div>
+    <div class="login-tagline">Torneo 2026</div>
+    <div class="login-tabs">
+      <button class="login-tab active" id="ltab-p" onclick="switchLoginTab('player')">Soy Jugador</button>
+      <button class="login-tab" id="ltab-a" onclick="switchLoginTab('admin')">Admin</button>
+    </div>
+    <div id="login-player-form" class="login-card">
+      <div class="login-step active" id="step-name">
+        <div class="form-group"><label class="form-label">¿Quién sos?</label><select id="login-select" class="form-input"><option value="">-- Seleccioná tu nombre</option></select></div>
+        <button class="btn btn-primary btn-full" onclick="onPlayerNext()">Continuar →</button>
+        <div class="pin-error" id="err-name"></div>
+      </div>
+      <div class="login-step" id="step-create">
+        <button class="step-back" onclick="goStep('step-name')">← Volver</button>
+        <div class="first-note">👋 ¡Primera vez! Elegí tu <strong>PIN de 4 dígitos</strong>. Lo usarás siempre para entrar.</div>
+        <div class="pin-title">Elegí tu PIN</div>
+        <div class="pin-dots" id="dots-create"><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div></div>
+        <div class="pin-error" id="err-create"></div>
+        <div class="numpad">
+          <button class="np-btn" onclick="pp('create',1)">1</button><button class="np-btn" onclick="pp('create',2)">2</button><button class="np-btn" onclick="pp('create',3)">3</button>
+          <button class="np-btn" onclick="pp('create',4)">4</button><button class="np-btn" onclick="pp('create',5)">5</button><button class="np-btn" onclick="pp('create',6)">6</button>
+          <button class="np-btn" onclick="pp('create',7)">7</button><button class="np-btn" onclick="pp('create',8)">8</button><button class="np-btn" onclick="pp('create',9)">9</button>
+          <button class="np-btn empty" disabled></button><button class="np-btn" onclick="pp('create',0)">0</button><button class="np-btn del" onclick="pd('create')">⌫</button>
+        </div>
+      </div>
+      <div class="login-step" id="step-confirm">
+        <button class="step-back" onclick="goStep('step-create')">← Volver</button>
+        <div class="pin-title">Confirmá tu PIN</div>
+        <div class="pin-dots" id="dots-confirm"><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div></div>
+        <div class="pin-error" id="err-confirm"></div>
+        <div class="numpad">
+          <button class="np-btn" onclick="pp('confirm',1)">1</button><button class="np-btn" onclick="pp('confirm',2)">2</button><button class="np-btn" onclick="pp('confirm',3)">3</button>
+          <button class="np-btn" onclick="pp('confirm',4)">4</button><button class="np-btn" onclick="pp('confirm',5)">5</button><button class="np-btn" onclick="pp('confirm',6)">6</button>
+          <button class="np-btn" onclick="pp('confirm',7)">7</button><button class="np-btn" onclick="pp('confirm',8)">8</button><button class="np-btn" onclick="pp('confirm',9)">9</button>
+          <button class="np-btn empty" disabled></button><button class="np-btn" onclick="pp('confirm',0)">0</button><button class="np-btn del" onclick="pd('confirm')">⌫</button>
+        </div>
+      </div>
+      <div class="login-step" id="step-enter">
+        <button class="step-back" onclick="goStep('step-name')">← Volver</button>
+        <div class="pin-title" id="enter-title">Ingresá tu PIN</div>
+        <div class="pin-dots" id="dots-enter"><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div></div>
+        <div class="pin-error" id="err-enter"></div>
+        <div class="numpad">
+          <button class="np-btn" onclick="pp('enter',1)">1</button><button class="np-btn" onclick="pp('enter',2)">2</button><button class="np-btn" onclick="pp('enter',3)">3</button>
+          <button class="np-btn" onclick="pp('enter',4)">4</button><button class="np-btn" onclick="pp('enter',5)">5</button><button class="np-btn" onclick="pp('enter',6)">6</button>
+          <button class="np-btn" onclick="pp('enter',7)">7</button><button class="np-btn" onclick="pp('enter',8)">8</button><button class="np-btn" onclick="pp('enter',9)">9</button>
+          <button class="np-btn empty" disabled></button><button class="np-btn" onclick="pp('enter',0)">0</button><button class="np-btn del" onclick="pd('enter')">⌫</button>
+        </div>
+      </div>
+    </div>
+    <div id="login-admin-form" class="login-card" style="display:none">
+      <div class="pin-title">PIN de administrador</div>
+      <div class="pin-dots" id="dots-admin"><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div></div>
+      <div class="pin-error" id="err-admin"></div>
+      <div class="numpad">
+        <button class="np-btn" onclick="pp('admin',1)">1</button><button class="np-btn" onclick="pp('admin',2)">2</button><button class="np-btn" onclick="pp('admin',3)">3</button>
+        <button class="np-btn" onclick="pp('admin',4)">4</button><button class="np-btn" onclick="pp('admin',5)">5</button><button class="np-btn" onclick="pp('admin',6)">6</button>
+        <button class="np-btn" onclick="pp('admin',7)">7</button><button class="np-btn" onclick="pp('admin',8)">8</button><button class="np-btn" onclick="pp('admin',9)">9</button>
+        <button class="np-btn empty" disabled></button><button class="np-btn" onclick="pp('admin',0)">0</button><button class="np-btn del" onclick="pd('admin')">⌫</button>
+      </div>
+      <div class="admin-note">PIN por defecto: <strong>1234</strong></div>
+    </div>
+  </div>
+</div>
+
+<div id="offline-banner">⚠️ Sin conexión</div>
+
+<header class="app-header" id="app-header" style="display:none">
+  <div class="header-top">
+    <div class="app-title">⚽ TORNEO <span>2026</span></div>
+    <div class="user-info">
+      <div class="sync-dot" id="sync-dot"></div>
+      <div class="user-chip" onclick="openProfileModal()" title="Editar perfil"><div class="udot" id="udot"></div><span id="user-lbl"></span> ✏️</div>
+      <button class="logout-btn" onclick="logout()">↩</button>
+    </div>
+  </div>
+  <nav class="tabs" id="app-tabs"></nav>
+</header>
+
+<main class="content" id="app-content" style="display:none">
+  <section id="sec-tabla" class="section">
+    <div id="week-banner-el"></div><div id="rot-banner-el"></div><div id="abs-alerts-el"></div>
+    <div id="funny-comment-el"></div>
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div class="card-title" style="margin:0">Posiciones</div>
+        <div style="font-size:10px;color:var(--muted);text-align:right;line-height:2"><span style="color:var(--green)">■</span> TOP&nbsp;<span style="color:var(--red)">■</span> DESC</div>
+      </div>
+      <div id="standings-container"></div>
+    </div>
+    <div id="trophies-section"></div>
+  </section>
+
+  <section id="sec-votar" class="section">
+    <div class="section-header"><div class="section-title">🗳️ Votar</div></div>
+    <div id="vote-container"></div>
+  </section>
+
+  <section id="sec-noticias" class="section">
+    <div class="section-header"><div class="section-title">📰 Noticias</div><div style="font-size:11px;color:var(--muted)">🤖 Generadas por IA</div></div>
+    <div id="news-container"></div>
+  </section>
+
+  <section id="sec-chat" class="section">
+    <div class="chat-section">
+      <div class="chat-messages" id="chat-messages"><div class="empty-state"><div class="empty-state-icon">💬</div><p>No hay mensajes todavía.</p></div></div>
+      <div class="chat-bottom">
+        <div class="emoji-panel" id="emoji-panel"></div>
+        <div class="chat-input-row">
+          <div class="chat-input-wrap">
+            <textarea id="chat-input" class="chat-input" placeholder="Escribí algo..." maxlength="500" rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}"></textarea>
+            <button class="emoji-toggle" onclick="toggleEmoji()">😊</button>
+          </div>
+          <button class="chat-send" id="chat-send-btn" onclick="sendMsg()">➤</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="sec-partido" class="section">
+    <div class="card">
+      <div class="card-title">Registrar Partido</div>
+      <div class="form-group"><label class="form-label">Fecha</label><input type="date" id="match-date" class="form-input"></div>
+      <div class="form-group"><label class="form-label">Marcador</label>
+        <div class="score-row">
+          <div style="text-align:right;font-weight:700;font-size:11px;color:var(--blue)">EQUIPO A</div>
+          <input type="number" id="score-a" min="0" max="99" value="0" class="form-input score-input" style="background:rgba(77,166,255,.08);border-color:rgba(77,166,255,.3)">
+          <div class="score-dash">--</div>
+          <input type="number" id="score-b" min="0" max="99" value="0" class="form-input score-input" style="background:rgba(255,119,68,.08);border-color:rgba(255,119,68,.3)">
+          <div style="font-weight:700;font-size:11px;color:var(--orange)">EQUIPO B</div>
+        </div>
+      </div>
+      <hr class="divider"><div class="form-label" style="margin-bottom:8px">Rol de cada jugador</div>
+      <div id="player-assignment"></div>
+      <hr class="divider">
+      <div class="info-alert">🗳️ Al guardar se abre la <strong style="color:var(--text)">votación anónima</strong> de MVP y peor jugador.</div>
+      <div id="match-warning" style="display:none;color:var(--yellow);font-size:13px;margin-bottom:10px;padding:9px;background:rgba(245,197,24,.08);border-radius:8px;border:1px solid rgba(245,197,24,.2)"></div>
+      <button class="btn btn-primary btn-full" id="save-match-btn" onclick="saveMatch()">⚡ Guardar Partido</button>
+    </div>
+    <div class="card">
+      <div class="card-title">📲 WhatsApp del Grupo</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:10px">Generá un mensaje con tabla, rotaciones y próximo partido.</div>
+      <button class="btn btn-wa btn-full" onclick="openWaModal()">📤 Generar mensaje</button>
+    </div>
+  </section>
+
+  <section id="sec-jugadores" class="section">
+    <div class="section-header"><div class="section-title">Jugadores</div><button class="btn btn-primary btn-sm" onclick="openAddPlayer()">+ Agregar</button></div>
+    <div id="players-list" class="player-grid"></div>
+  </section>
+
+  <section id="sec-historial" class="section">
+    <div class="section-header"><div class="section-title">Historial</div><span id="total-matches-lbl" style="font-size:12px;color:var(--muted)"></span></div>
+    <div id="history-list"></div>
+  </section>
+
+  <section id="sec-reglas" class="section">
+    <div class="card">
+      <div class="card-title">📋 Reglas 2026</div>
+      <div class="rule-grid" style="margin-bottom:14px">
+        <div class="rule-pill pos"><div class="val">+3</div><div class="lbl">Victoria</div></div>
+        <div class="rule-pill"><div class="val" style="color:var(--yellow)">+1</div><div class="lbl">Empate</div></div>
+        <div class="rule-pill"><div class="val" style="color:var(--muted)">0</div><div class="lbl">Derrota</div></div>
+        <div class="rule-pill pos"><div class="val">+1</div><div class="lbl">MVP 🏅</div></div>
+        <div class="rule-pill neg"><div class="val">-1</div><div class="lbl">Peor 💩</div></div>
+        <div class="rule-pill pos"><div class="val">+1</div><div class="lbl">Banco 🪑</div></div>
+      </div>
+      <hr class="divider">
+      <div style="font-family:var(--font-d);font-size:15px;color:var(--yellow);margin-bottom:7px">Ausencias</div>
+      <div style="font-size:14px;line-height:1.9;color:var(--muted)">✅ Justificadas no penalizan.<br>⚠️ Cada <strong style="color:var(--yellow)">3 faltas</strong> injust. → <span style="color:var(--red)">-1 punto</span><br>❌ <strong style="color:var(--red)">5 faltas</strong> → Descalificación</div>
+      <hr class="divider">
+      <div style="font-family:var(--font-d);font-size:15px;color:var(--blue);margin-bottom:7px">Banco y Rotación</div>
+      <div style="font-size:14px;line-height:1.9;color:var(--muted)">🪑 Presente sin jugar → <span style="color:var(--green)">+1 punto</span><br>🔄 El del banco juega <strong style="color:var(--blue)">sí o sí</strong> el próximo.</div>
+      <hr class="divider">
+      <div style="font-family:var(--font-d);font-size:15px;color:var(--yellow);margin-bottom:7px">Votación anónima 🗳️</div>
+      <div style="font-size:14px;line-height:1.9;color:var(--muted)">MVP (+1) y peor (-1). Podés dejar justificación anónima visible para todos.</div>
+    </div>
+  </section>
+
+  <section id="sec-config" class="section">
+    <div class="card"><div class="card-title">⚙️ PIN de Admin</div>
+      <div class="form-group"><label class="form-label">Nuevo PIN</label><input type="password" id="new-admin-pin" class="form-input" maxlength="6" inputmode="numeric" placeholder="••••"></div>
+      <button class="btn btn-primary" onclick="changeAdminPin()">Guardar</button>
+    </div>
+    <div class="card"><div class="card-title">👑 Sub-administradores</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:10px">Los sub-admins pueden cargar y editar partidos.</div>
+      <div id="subadmin-list"></div>
+    </div>
+    <div class="card"><div class="card-title">🔑 Resetear PIN de jugador</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:10px">La próxima vez que entre elegirá uno nuevo.</div>
+      <div id="reset-pin-list"></div>
+    </div>
+  </section>
+</main>
+
+<!-- MODALS -->
+
+<div class="modal-overlay" id="add-player-modal">
+  <div class="modal"><div class="modal-title">Agregar Jugador</div>
+    <div class="form-group"><label class="form-label">Nombre</label><input type="text" id="new-player-name" class="form-input" placeholder="Ej: Martín G." maxlength="20"></div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:12px">El jugador elige su PIN la primera vez que ingrese.</div>
+    <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('add-player-modal')">Cancelar</button><button class="btn btn-primary" onclick="addPlayer()">Agregar</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="delete-modal">
+  <div class="modal"><div class="modal-title">Eliminar jugador</div>
+    <p style="color:var(--muted);font-size:14px;line-height:1.6">¿Eliminar a <strong id="delete-name" style="color:var(--text)"></strong>?</p>
+    <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('delete-modal')">Cancelar</button><button class="btn btn-danger" onclick="confirmDelete()">Eliminar</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="edit-match-modal">
+  <div class="modal"><div class="modal-title">✏️ Editar Partido</div>
+    <div class="form-group"><label class="form-label">Fecha</label><input type="date" id="edit-match-date" class="form-input"></div>
+    <div class="form-group"><label class="form-label">Marcador</label>
+      <div class="score-row">
+        <div style="text-align:right;font-weight:700;font-size:11px;color:var(--blue)">EQUIPO A</div>
+        <input type="number" id="edit-score-a" min="0" max="99" value="0" class="form-input score-input" style="background:rgba(77,166,255,.08);border-color:rgba(77,166,255,.3)">
+        <div class="score-dash">--</div>
+        <input type="number" id="edit-score-b" min="0" max="99" value="0" class="form-input score-input" style="background:rgba(255,119,68,.08);border-color:rgba(255,119,68,.3)">
+        <div style="font-weight:700;font-size:11px;color:var(--orange)">EQUIPO B</div>
+      </div>
+    </div>
+    <hr class="divider"><div class="form-label" style="margin-bottom:8px">Rol de cada jugador</div>
+    <div id="edit-player-assignment"></div>
+    <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('edit-match-modal')">Cancelar</button><button class="btn btn-primary" id="edit-save-btn" onclick="saveEditMatch()">Guardar cambios</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="profile-modal">
+  <div class="modal"><div class="modal-title">👤 Mi Perfil</div>
+    <div id="profile-stats" style="margin-bottom:14px"></div>
+    <div class="form-group"><label class="form-label">Apodo en el chat</label>
+      <input type="text" id="profile-nickname" class="form-input" placeholder="Ej: El Toro, Piña, etc." maxlength="20">
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">Aparecerá junto a tu nombre real en el chat.</div>
+    </div>
+    <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('profile-modal')">Cancelar</button><button class="btn btn-primary" onclick="saveProfile()">Guardar</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="wa-modal">
+  <div class="modal"><div class="modal-title">📲 WhatsApp</div>
+    <div class="wa-preview" id="wa-preview"></div>
+    <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('wa-modal')">Cerrar</button><button class="btn btn-wa" onclick="copyWa()">📋 Copiar</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  getFirestore,collection,doc,addDoc,updateDoc,deleteDoc,
+  onSnapshot,serverTimestamp,query,orderBy,where,getDocs,getDoc,setDoc,arrayRemove
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const fbApp=initializeApp({apiKey:"AIzaSyCbEHsS3KSbvqUSqSojwy7nML5sKZSdjbM",authDomain:"futbolapp-2153c.firebaseapp.com",projectId:"futbolapp-2153c",storageBucket:"futbolapp-2153c.firebasestorage.app",messagingSenderId:"988738860809",appId:"1:988738860809:web:8adbaa56aa99931dd885d8"});
+const db=getFirestore(fbApp);
+
+// ── STATE ──────────────────────────────────────────────────────
+let session=null,players=[],matches=[],chatMsgs=[],newsArticles={};
+let adminPin="1234",adminIds=[],groqKey="";
+let loaded={p:false,m:false,s:false,n:false};
+const pins={create:'',confirm:'',enter:'',admin:''};
+let createFirst='',loginPid='';
+let chatUnsub=null,editingMatchId=null;
+
+// ── SESSION ────────────────────────────────────────────────────
+function loadSess(){try{const s=localStorage.getItem('liga5_s6');if(s)session=JSON.parse(s);}catch(e){}}
+function saveSess(s){session=s;localStorage.setItem('liga5_s6',JSON.stringify(s));}
+function clearSess(){session=null;localStorage.removeItem('liga5_s6');}
+function isAdmin(){return session?.type==='admin'||adminIds.includes(session?.id);}
+function myPid(){return session?.id||null;}
+function myName(){
+  if(session?.type==='admin')return'Admin';
+  const p=players.find(x=>x.id===session?.id);
+  return p?.nickname?`${p.name} "${p.nickname}"`:p?.name||session?.name||'?';
+}
+function myDisplayName(){
+  const p=players.find(x=>x.id===session?.id);
+  return p?.nickname?`${p.name} «${p.nickname}»`:p?.name||session?.name||'?';
+}
+
+// ── UTILS ──────────────────────────────────────────────────────
+function getInits(n){return n.split(' ').map(w=>w[0]?.toUpperCase()||'').join('').slice(0,2);}
+function escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function toast(msg,err=false){const el=document.getElementById('toast');el.textContent=msg;el.className='toast'+(err?' error':'');el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2600);}
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+window.closeModal=closeModal;
+window.addEventListener('online',()=>{document.getElementById('sync-dot').classList.remove('offline');document.getElementById('offline-banner').style.display='none';});
+window.addEventListener('offline',()=>{document.getElementById('sync-dot').classList.add('offline');document.getElementById('offline-banner').style.display='block';});
+function fmtTime(ts){if(!ts?.seconds)return'';const d=new Date(ts.seconds*1000);return d.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});}
+function fmtDate(ts){if(!ts?.seconds)return'';const d=new Date(ts.seconds*1000),t=new Date(),y=new Date(t);y.setDate(t.getDate()-1);if(d.toDateString()===t.toDateString())return'Hoy';if(d.toDateString()===y.toDateString())return'Ayer';return d.toLocaleDateString('es-AR',{weekday:'short',day:'numeric',month:'short'});}
+
+// ── PIN UI ─────────────────────────────────────────────────────
+function updDots(name){
+  const v=pins[name],isC=name==='confirm';
+  const col=isC?'var(--blue)':'var(--green)';
+  document.getElementById('dots-'+name)?.querySelectorAll('.pin-dot').forEach((d,i)=>{
+    const f=i<v.length;
+    d.style.background=f?col:'transparent';
+    d.style.borderColor=f?col:'var(--border)';
+    d.style.transform=f?'scale(1.18)':'scale(1)';
+    d.style.boxShadow=f?`0 0 8px ${col}50`:'none';
+  });
+}
+window.pp=function(name,digit){if(pins[name].length>=4)return;pins[name]+=digit;updDots(name);if(pins[name].length===4)setTimeout(()=>onPinComplete(name),120);};
+window.pd=function(name){pins[name]=pins[name].slice(0,-1);updDots(name);};
+function clrPin(name){pins[name]='';updDots(name);}
+function setErr(name,msg){const e=document.getElementById('err-'+name);if(e)e.textContent=msg;}
+function shk(id){const e=document.getElementById(id);if(!e)return;e.classList.remove('shake');void e.offsetWidth;e.classList.add('shake');setTimeout(()=>e.classList.remove('shake'),400);}
+
+async function onPinComplete(name){
+  if(name==='create'){createFirst=pins.create;clrPin('create');goStep('step-confirm');}
+  else if(name==='confirm'){
+    if(pins.confirm!==createFirst){setErr('confirm','Los PINs no coinciden.');shk('dots-confirm');clrPin('confirm');return;}
+    try{await updateDoc(doc(db,'players',loginPid),{pin:createFirst});const p=players.find(x=>x.id===loginPid);saveSess({type:'player',id:loginPid,name:p?.name||''});showApp();}
+    catch(e){setErr('confirm','Error al guardar.');clrPin('confirm');}
+  }
+  else if(name==='enter'){
+    const p=players.find(x=>x.id===loginPid);
+    if(p?.pin===pins.enter){saveSess({type:'player',id:loginPid,name:p.name});showApp();}
+    else{setErr('enter','PIN incorrecto.');shk('dots-enter');clrPin('enter');}
+  }
+  else if(name==='admin'){
+    if(pins.admin===adminPin){saveSess({type:'admin'});showApp();}
+    else{setErr('admin','PIN incorrecto.');shk('dots-admin');clrPin('admin');}
+  }
+}
+
+// ── LOGIN ──────────────────────────────────────────────────────
+function goStep(id){document.querySelectorAll('#login-player-form .login-step').forEach(s=>s.classList.remove('active'));document.getElementById(id)?.classList.add('active');}
+window.goStep=goStep;
+function populateSel(){const sel=document.getElementById('login-select');const cur=sel.value;sel.innerHTML='<option value="">-- Seleccioná tu nombre</option>'+players.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');if(cur)sel.value=cur;}
+window.onPlayerNext=function(){const pid=document.getElementById('login-select').value;setErr('name','');if(!pid){setErr('name','Seleccioná tu nombre.');return;}loginPid=pid;createFirst='';Object.keys(pins).forEach(k=>clrPin(k));const p=players.find(x=>x.id===pid);if(!p?.pin){goStep('step-create');}else{document.getElementById('enter-title').textContent=`Hola ${p.name} 👋 Ingresá tu PIN`;goStep('step-enter');}};
+window.switchLoginTab=function(type){document.getElementById('ltab-p').classList.toggle('active',type==='player');document.getElementById('ltab-a').classList.toggle('active',type==='admin');document.getElementById('login-player-form').style.display=type==='player'?'block':'none';document.getElementById('login-admin-form').style.display=type==='admin'?'block':'none';if(type==='admin')clrPin('admin');};
+function showLogin(){document.getElementById('login-screen').classList.add('show');document.getElementById('app-header').style.display='none';document.getElementById('app-content').style.display='none';if(chatUnsub){chatUnsub();chatUnsub=null;}goStep('step-name');populateSel();Object.keys(pins).forEach(k=>clrPin(k));}
+function showApp(){document.getElementById('login-screen').classList.remove('show');document.getElementById('app-header').style.display='block';document.getElementById('app-content').style.display='block';const dot=document.getElementById('udot'),lbl=document.getElementById('user-lbl');if(isAdmin()&&session.type==='admin'){dot.classList.add('admin');lbl.textContent='Admin';}else{dot.classList.remove('admin');const p=players.find(x=>x.id===session?.id);lbl.textContent=p?.nickname?`${p.name} «${p.nickname}»`:p?.name||session.name;}buildTabs();setTab('tabla');subscribeChat();}
+window.logout=function(){clearSess();showLogin();};
+
+// ── FIREBASE ───────────────────────────────────────────────────
+getDoc(doc(db,'settings','config')).then(snap=>{if(snap.exists()){adminPin=snap.data().adminPin||'1234';adminIds=snap.data().adminIds||[];groqKey=snap.data().groqKey||'';}else setDoc(doc(db,'settings','config'),{adminPin:'1234',adminIds:[]});loaded.s=true;tryStart();}).catch(()=>{loaded.s=true;tryStart();});
+onSnapshot(query(collection(db,'players'),orderBy('createdAt','asc')),snap=>{players=snap.docs.map(d=>({id:d.id,...d.data()}));loaded.p=true;tryStart();populateSel();if(session){renderCurrent();updateVoteBadge();}});
+onSnapshot(query(collection(db,'matches'),orderBy('createdAt','asc')),snap=>{matches=snap.docs.map(d=>({id:d.id,...d.data()}));loaded.m=true;tryStart();if(session){renderCurrent();updateVoteBadge();}});
+// News articles from Firestore
+onSnapshot(collection(db,'news'),snap=>{snap.docs.forEach(d=>{newsArticles[d.data().matchId]=d.data().article;});loaded.n=true;tryStart();if(session&&currentTab==='noticias')renderNews();});
+
+function tryStart(){if(!loaded.p||!loaded.m||!loaded.s||!loaded.n)return;document.getElementById('loading-screen').classList.add('hidden');loadSess();if(session){if(session.type==='player'&&!players.find(p=>p.id===session.id)){clearSess();showLogin();return;}showApp();}else showLogin();}
+function subscribeChat(){if(chatUnsub)return;chatUnsub=onSnapshot(query(collection(db,'chat'),orderBy('createdAt','asc')),snap=>{const prev=chatMsgs.length;chatMsgs=snap.docs.map(d=>({id:d.id,...d.data()}));if(currentTab==='chat')renderChat();else if(chatMsgs.length>prev&&prev>0){const b=document.getElementById('chat-badge');if(b)b.classList.add('show');}});}
+
+// ── TABS ───────────────────────────────────────────────────────
+let currentTab='tabla';
+function buildTabs(){
+  const el=document.getElementById('app-tabs');
+  const at=[{id:'tabla',l:'Tabla'},{id:'noticias',l:'📰'},{id:'partido',l:'+ Partido'},{id:'jugadores',l:'Jugadores'},{id:'historial',l:'Historial'},{id:'chat',l:'💬 Chat',b:'chat-badge'},{id:'reglas',l:'Reglas'},{id:'config',l:'⚙️'}];
+  const pt=[{id:'tabla',l:'Tabla'},{id:'votar',l:'🗳️ Votar',b:'vote-badge'},{id:'chat',l:'💬 Chat',b:'chat-badge'},{id:'historial',l:'Historial'},{id:'noticias',l:'📰 Noticias'},{id:'reglas',l:'Reglas'}];
+  const tabs=isAdmin()?at:pt;
+  el.innerHTML=tabs.map(t=>`<button class="tab" id="tab-${t.id}" onclick="setTab('${t.id}')">${t.l}${t.b?`<span class="tab-badge" id="${t.b}"></span>`:''}</button>`).join('');
+}
+function setTab(name){currentTab=name;document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById('tab-'+name)?.classList.add('active');document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById('sec-'+name)?.classList.add('active');if(name==='chat'){const b=document.getElementById('chat-badge');if(b)b.classList.remove('show');}renderSection(name);}
+window.setTab=setTab;
+function renderCurrent(){if(currentTab&&session)renderSection(currentTab);}
+function renderSection(n){if(!session)return;if(n==='tabla')renderStandings();if(n==='votar')renderVoting();if(n==='noticias')renderNews();if(n==='chat')renderChat();if(n==='partido')renderMatchForm();if(n==='jugadores')renderPlayers();if(n==='historial')renderHistory();if(n==='config')renderConfig();}
+
+async function updateVoteBadge(){if(isAdmin())return;const badge=document.getElementById('vote-badge');if(!badge)return;const pid=myPid(),open=matches.filter(m=>m.votingOpen&&!m.votingClosed);let pending=0;for(const m of open){if(![...(m.teamA||[]),...(m.teamB||[]),...(m.bench||[])].includes(pid))continue;const sn=await getDocs(query(collection(db,'votes'),where('matchId','==',m.id),where('voterId','==',pid)));if(sn.empty)pending++;}badge.classList.toggle('show',pending>0);}
+
+// ── STATS ENGINE (FIX #1: legacy mvp field) ───────────────────
+function computeStats(){
+  const st={};
+  players.forEach(p=>{st[p.id]={id:p.id,name:p.name,pj:0,pg:0,pe:0,pp:0,bench:0,mvp:0,worst:0,absJust:0,absUnjust:0,pts:0,streak:[],absencePenalty:0,disqualified:false};});
+  matches.forEach(m=>{
+    const sa=parseInt(m.scoreA)||0,sb=parseInt(m.scoreB)||0,res=sa>sb?'A':sb>sa?'B':'D';
+    (m.teamA||[]).forEach(pid=>{if(!st[pid])return;st[pid].pj++;if(res==='A'){st[pid].pg++;st[pid].pts+=3;st[pid].streak.push('W');}else if(res==='D'){st[pid].pe++;st[pid].pts+=1;st[pid].streak.push('D');}else{st[pid].pp++;st[pid].streak.push('L');}});
+    (m.teamB||[]).forEach(pid=>{if(!st[pid])return;st[pid].pj++;if(res==='B'){st[pid].pg++;st[pid].pts+=3;st[pid].streak.push('W');}else if(res==='D'){st[pid].pe++;st[pid].pts+=1;st[pid].streak.push('D');}else{st[pid].pp++;st[pid].streak.push('L');}});
+    (m.bench||[]).forEach(pid=>{if(!st[pid])return;st[pid].bench++;st[pid].pts+=1;st[pid].streak.push('B');});
+    (m.absentJust||[]).forEach(pid=>{if(st[pid])st[pid].absJust++;});
+    (m.absentUnjust||[]).forEach(pid=>{if(st[pid])st[pid].absUnjust++;});
+    // FIX: support BOTH legacy direct mvp field AND new votingClosed mvpResult
+    if(m.votingClosed){
+      const mvps=m.mvpResult?(Array.isArray(m.mvpResult)?m.mvpResult:[m.mvpResult]).filter(Boolean):[];
+      mvps.forEach(pid=>{if(st[pid]){st[pid].mvp++;st[pid].pts+=1;}});
+      if(m.worstResult&&st[m.worstResult]){st[m.worstResult].worst++;st[m.worstResult].pts-=1;}
+    } else {
+      // Legacy: MVP assigned directly by admin (old system, no voting)
+      if(m.mvp&&st[m.mvp]){st[m.mvp].mvp++;st[m.mvp].pts+=1;}
+      if(m.worst&&st[m.worst]){st[m.worst].worst++;st[m.worst].pts-=1;}
+    }
+  });
+  Object.values(st).forEach(s=>{const p=Math.floor(s.absUnjust/3);s.pts-=p;s.absencePenalty=p;s.disqualified=s.absUnjust>=5;});
+  return Object.values(st).sort((a,b)=>{if(a.disqualified&&!b.disqualified)return 1;if(!a.disqualified&&b.disqualified)return -1;return b.pts-a.pts||b.pg-a.pg||b.mvp-a.mvp;});
+}
+function getRotIds(){if(!matches.length)return[];return[...matches].sort((a,b)=>(b.date||'').localeCompare(a.date||''))[0].bench||[];}
+
+// ── TITLES (expanded) ─────────────────────────────────────────
+function getPlayerTitle(pid,sorted){
+  if(!sorted.length)return null;
+  const s=sorted.find(x=>x.id===pid);
+  if(!s||!s.pj)return null;
+  const active=sorted.filter(x=>!x.disqualified&&x.pj>0);
+  if(!active.length)return null;
+  const pos=active.findIndex(x=>x.id===pid);
+  const last3=s.streak.slice(-3),last5=s.streak.slice(-5);
+  if(pos===0)return{icon:'👑',label:'El Crack'};
+  if(last5.length===5&&last5.every(x=>x==='W'))return{icon:'🔥🔥',label:'Modo Dios'};
+  if(last3.length===3&&last3.every(x=>x==='W'))return{icon:'🔥',label:'En llamas'};
+  if(last5.length===5&&last5.every(x=>x==='L'))return{icon:'⚰️',label:'Está enterrado'};
+  if(last3.length===3&&last3.every(x=>x==='L'))return{icon:'💀',label:'En caída libre'};
+  const maxMvp=Math.max(...active.map(x=>x.mvp));
+  if(s.mvp===maxMvp&&maxMvp>=2&&active.filter(x=>x.mvp===maxMvp).length===1)return{icon:'⭐',label:'El Embajador'};
+  if(s.mvp>=4)return{icon:'🌟',label:'Leyenda viviente'};
+  const maxWorst=Math.max(...active.map(x=>x.worst));
+  if(s.worst===maxWorst&&maxWorst>=2&&active.filter(x=>x.worst===maxWorst).length===1)return{icon:'💩',label:'La Maldición'};
+  if(s.worst>=4)return{icon:'🤦',label:'El Clásico Malo'};
+  const maxPp=Math.max(...active.map(x=>x.pp));
+  if(s.pp===maxPp&&maxPp>=3&&active.filter(x=>x.pp===maxPp).length===1)return{icon:'👻',label:'El Fantasma'};
+  const maxAbsU=Math.max(...active.map(x=>x.absUnjust));
+  if(s.absUnjust===maxAbsU&&maxAbsU>=2&&active.filter(x=>x.absUnjust===maxAbsU).length===1)return{icon:'✈️',label:'El Turista'};
+  const maxBench=Math.max(...active.map(x=>x.bench));
+  if(s.bench===maxBench&&maxBench>=2&&active.filter(x=>x.bench===maxBench).length===1)return{icon:'🪑',label:'El Reserva VIP'};
+  if(s.bench>=4)return{icon:'🛋️',label:'El Sofá Profesional'};
+  if(pos===active.length-1&&active.length>2)return{icon:'⬇️',label:'Camino al abismo'};
+  if(pos===1)return{icon:'🥈',label:'El Eterno Segundo'};
+  if(s.pe>=3&&s.pg===0)return{icon:'🤝',label:'El Rey del Empate'};
+  if(s.absJust>=3)return{icon:'🏥',label:'El Lesionado'};
+  if(s.pj>=10&&s.pg>s.pp)return{icon:'💪',label:'El Consistente'};
+  if(s.streak.slice(-4).every(x=>x==='D'))return{icon:'😵',label:'La Racha Negra'};
+  return null;
+}
+
+// ── ACHIEVEMENTS (expanded) ────────────────────────────────────
+function getAchievements(s){
+  const a=[];
+  if(s.mvp>=1)a.push({icon:'🏅',label:'Primer MVP'});
+  if(s.mvp>=3)a.push({icon:'🏅🏅🏅',label:'Hat-trick MVP'});
+  if(s.mvp>=5)a.push({icon:'👑',label:'5 MVPs'});
+  if(s.pg>=3)a.push({icon:'🏆',label:'3 victorias'});
+  if(s.pg>=5)a.push({icon:'🏆🏆',label:'5 victorias'});
+  if(s.pg>=10)a.push({icon:'🐐',label:'10 victorias (GOAT?)'});
+  if(s.worst>=2)a.push({icon:'💩',label:'Peor recurrente'});
+  if(s.worst>=4)a.push({icon:'💩💩',label:'Leyenda oscura'});
+  if(s.bench>=2)a.push({icon:'🪑',label:'Banquero'});
+  if(s.bench>=4)a.push({icon:'🛋️',label:'Rey del banco'});
+  const last5=s.streak.slice(-5);
+  if(last5.length===5&&last5.every(x=>x==='W'))a.push({icon:'🔥',label:'Imparable x5'});
+  if(last5.length===5&&last5.every(x=>x==='L'))a.push({icon:'⚰️',label:'Cinco entierros'});
+  if(s.absUnjust>=3)a.push({icon:'✈️',label:'Siempre viajando'});
+  if(s.pj>=10)a.push({icon:'💪',label:'Veterano (10 PJ)'});
+  if(s.pj>=20)a.push({icon:'🎖️',label:'Héroe de la liga'});
+  if(s.pe>=4)a.push({icon:'🤝',label:'El Rey del Empate'});
+  if(s.pts<0)a.push({icon:'📉',label:'En negativo (oof)'});
+  if(s.pp>=8)a.push({icon:'😭',label:'8 derrotas (sufridor)'});
+  return a.slice(0,6);
+}
+
+// ── FUNNY COMMENTS (expanded) ─────────────────────────────────
+function getFunnyComments(sorted){
+  if(!sorted.length||!matches.length)return[];
+  const active=sorted.filter(x=>!x.disqualified&&x.pj>0);
+  if(!active.length)return[];
+  const seed=matches.length;
+  const all=[];
+
+  // Leader jokes
+  const L=active[0];
+  [
+    `👑 <strong>${L.name}</strong> está tan arriba que manda mensajes de voz de 10 minutos contando cómo ganó.`,
+    `🦁 <strong>${L.name}</strong> con ${L.pts} pts. El resto está pagando entrada para verlo jugar.`,
+    `😎 <strong>${L.name}</strong> ya ensayó el discurso de campeón. Tres veces. Esta semana.`,
+    `🏆 <strong>${L.name}</strong> está tan cómodo en el primer puesto que se trajo almohada.`,
+    `💅 <strong>${L.name}</strong> juega sin atarse los cordones y gana igual. No es justo.`
+  ].forEach(c=>all.push(c));
+
+  // Last place jokes
+  if(active.length>2){
+    const Last=active[active.length-1];
+    [
+      `⚰️ <strong>${Last.name}</strong> tan abajo que necesita GPS para ver la tabla.`,
+      `🚑 Alguien avísele a <strong>${Last.name}</strong> que hay un torneo en curso, por favor.`,
+      `📉 <strong>${Last.name}</strong>: menos puntos que excusas tiene para no venir.`,
+      `😔 <strong>${Last.name}</strong> mira la tabla de arriba para abajo. De muy abajo.`,
+      `🪦 El grupo creó una colecta para pagarle el psicólogo a <strong>${Last.name}</strong>. Ya juntaron $14.`
+    ].forEach(c=>all.push(c));
+  }
+
+  // Streak jokes
+  active.forEach(s=>{
+    const last3=s.streak.slice(-3);
+    if(last3.length===3&&last3.every(x=>x==='L'))all.push(`💀 <strong>${s.name}</strong> lleva 3 derrotas seguidas. El equipo que lo sortea ya festejó dos veces.`);
+    if(last3.length===3&&last3.every(x=>x==='W'))all.push(`🔥 <strong>${s.name}</strong> viene de 3 victorias consecutivas. No lo paren, que no se puede.`);
+    if(s.bench>=2)all.push(`🪑 <strong>${s.name}</strong> lleva ${s.bench} veces en el banco. En este punto es casi un árbitro.`);
+    if(s.mvp>=2)all.push(`⭐ <strong>${s.name}</strong> con ${s.mvp} MVP${s.mvp>1?'s':''}. El resto vota por él hasta cuando pierde, por las dudas.`);
+    if(s.absUnjust>=2)all.push(`✈️ <strong>${s.name}</strong> con ${s.absUnjust} faltas injustificadas. Sus excusas ya tienen su propia narrativa cinematográfica.`);
+    if(s.worst>=2)all.push(`💩 <strong>${s.name}</strong> elegido peor jugador ${s.worst} veces. Los rivales le mandan un beso antes de salir a jugar.`);
+  });
+
+  // Second place joke
+  if(active.length>1){
+    const sec=active[1];
+    all.push(`🥈 <strong>${sec.name}</strong> a ${L.pts-sec.pts} punto${L.pts-sec.pts!==1?'s':''} del líder. Tan cerca, tan lejos.`);
+    all.push(`😤 <strong>${sec.name}</strong> hace todo bien pero nunca es suficiente. La historia del fútbol amateur en una persona.`);
+  }
+
+  // Pick 2 different ones based on seed
+  const r1=all[seed%all.length];
+  const r2=all[(seed+7)%all.length];
+  return r1===r2?[r1]:[r1,r2];
+}
+
+// ── STANDINGS ─────────────────────────────────────────────────
+function renderStandings(){
+  const sorted=computeStats();
+  const played=sorted.filter(s=>s.pj>0||s.bench>0||s.absUnjust>0||s.absJust>0);
+  const pMap={};players.forEach(p=>pMap[p.id]=p.name);
+  const bEl=document.getElementById('week-banner-el');
+  if(matches.length&&played.length){const L=played.find(s=>!s.disqualified)||played[0];const tt=getPlayerTitle(L.id,sorted);bEl.innerHTML=`<div class="week-banner"><div><div style="font-size:10px;text-transform:uppercase;color:var(--muted)">Jornada</div><div class="week-num">${matches.length}</div></div><div style="text-align:right"><div style="font-size:10px;text-transform:uppercase;color:var(--muted)">🏆 Líder</div><div style="font-weight:700;font-size:15px">${L.name}${tt?` <span class="player-title">${tt.icon} ${tt.label}</span>`:''}</div><div style="font-family:var(--font-d);font-size:22px;color:var(--green)">${L.pts} pts</div></div></div>`;}else bEl.innerHTML='';
+  const rotIds=getRotIds(),rEl=document.getElementById('rot-banner-el');
+  if(rotIds.length){const names=rotIds.map(id=>pMap[id]||'?').join(', ');rEl.innerHTML=`<div class="rot-alert"><span style="font-size:18px">🔄</span><span><strong style="color:var(--blue)">Rotación:</strong> ${names} debe${rotIds.length>1?'n':''} jugar el próximo.</span></div>`;}else rEl.innerHTML='';
+  const aEl=document.getElementById('abs-alerts-el');let aH='';
+  sorted.filter(s=>s.disqualified).forEach(s=>{aH+=`<div class="abs-alert">❌ <strong style="color:var(--red)">${s.name}</strong> -- Descalificado</div>`;});
+  sorted.filter(s=>s.absencePenalty>0&&!s.disqualified).forEach(s=>{aH+=`<div class="abs-alert">⚠️ <strong style="color:var(--yellow)">${s.name}</strong> -- ${s.absUnjust} faltas → -${s.absencePenalty} pto${s.absencePenalty!==1?'s':''}</div>`;});
+  aEl.innerHTML=aH;
+
+  // Funny comments (2)
+  const fcEl=document.getElementById('funny-comment-el');
+  const fcs=getFunnyComments(sorted);
+  fcEl.innerHTML=fcs.length>=2
+    ?`<div class="funny-box">💬 ${fcs[0]}</div><div class="funny-box2">💬 ${fcs[1]}</div>`
+    :fcs.length===1?`<div class="funny-box">💬 ${fcs[0]}</div>`:'';
+
+  const con=document.getElementById('standings-container');
+  if(!played.length){con.innerHTML=`<div class="empty-state"><div class="empty-state-icon">🏆</div><p>Aún no hay partidos.</p></div>`;return;}
+  const nonDis=played.filter(s=>!s.disqualified);
+  const topN=Math.max(1,Math.floor(nonDis.length*.3)),relN=Math.max(1,Math.floor(nonDis.length*.25));
+  let ndIdx=0,html=`<table class="standings-table"><thead><tr><th>#</th><th>Jugador</th><th>PJ</th><th>PG</th><th>PE</th><th>PP</th><th>Pts</th></tr></thead><tbody>`;
+  played.forEach(s=>{
+    if(s.disqualified){html+=`<tr class="zone-dis"><td><span class="pos-num" style="color:#555">--</span></td><td><div style="font-weight:600;font-size:12px">${s.name} <span class="badge badge-dis">DESCLF.</span></div></td><td style="color:var(--muted)">${s.pj}</td><td>--</td><td>--</td><td>--</td><td><span style="font-family:var(--font-d);color:#555">${s.pts}</span></td></tr>`;return;}
+    const pos=ndIdx+1,isTop=ndIdx<topN,isRel=ndIdx>=nonDis.length-relN,zC=isTop?'zone-top':isRel?'zone-rel':'zone-mid';ndIdx++;
+    const sh=s.streak.slice(-3).reverse().map(r=>{const letter=r==='W'?'V':r==='B'?'B':'D';return`<span class="streak-chip streak-${r}">${letter}</span>`;}).join('');
+    const rb=rotIds.includes(s.id)?` <span class="badge badge-rot">ROTA</span>`:'';
+    const mb=s.mvp>0?` <span class="badge badge-mvp">⭐${s.mvp}</span>`:'';
+    const tt=getPlayerTitle(s.id,sorted);
+    const tb=tt?` <span class="player-title">${tt.icon} ${tt.label}</span>`:'';
+    html+=`<tr class="${zC}"><td><span class="pos-num">${pos}</span></td><td><div style="font-weight:600;font-size:12px;line-height:1.5">${s.name}${rb}${mb}${tb}</div><div style="margin-top:2px">${sh}</div></td><td style="color:var(--muted)">${s.pj}</td><td style="color:var(--green)">${s.pg}</td><td style="color:var(--yellow)">${s.pe}</td><td style="color:var(--red)">${s.pp}</td><td><span class="${s.pts<0?'pts-bold pts-neg':'pts-bold'}">${s.pts}</span></td></tr>`;
+  });
+  con.innerHTML=html+`</tbody></table><div style="margin-top:8px;font-size:10px;color:var(--muted)"><span style="color:var(--green)">●</span>G <span style="color:var(--yellow)">●</span>E <span style="color:var(--red)">●</span>D <span style="color:var(--blue);opacity:.5">○</span>Banco</div>`;
+
+  // Trophies
+  const tEl=document.getElementById('trophies-section');
+  const allA=[];
+  sorted.filter(s=>!s.disqualified&&s.pj>0).forEach(s=>{getAchievements(s).forEach(a=>allA.push({...a,who:s.name}));});
+  tEl.innerHTML=allA.length?`<div class="card"><div class="card-title">🏆 Sala de Trofeos</div><div class="trophy-grid">${allA.slice(0,8).map(a=>`<div class="trophy-card"><div class="trophy-icon">${a.icon}</div><div><div class="trophy-label">${a.label}</div><div class="trophy-who">${a.who}</div></div></div>`).join('')}</div></div>`:'';
+}
+
+// ── VOTING ─────────────────────────────────────────────────────
+async function renderVoting(){
+  const con=document.getElementById('vote-container');con.innerHTML=`<div class="empty-state"><div class="empty-state-icon">⏳</div><p>Cargando...</p></div>`;
+  const pid=myPid(),pMap={};players.forEach(p=>pMap[p.id]=p.name);
+  const openMs=matches.filter(m=>m.votingOpen&&!m.votingClosed);
+  if(!openMs.length){con.innerHTML=`<div class="empty-state"><div class="empty-state-icon">✅</div><p>No hay votaciones abiertas.</p></div>`;return;}
+  let html='';
+  for(const m of openMs){
+    const elig=[...(m.teamA||[]),...(m.teamB||[]),...(m.bench||[])];
+    const isElig=elig.includes(pid);let voted=false;
+    if(isElig){const sn=await getDocs(query(collection(db,'votes'),where('matchId','==',m.id),where('voterId','==',pid)));voted=!sn.empty;}
+    const vSn=await getDocs(query(collection(db,'votes'),where('matchId','==',m.id)));
+    const vCnt=vSn.size,eCnt=elig.length,pct=eCnt?Math.round(vCnt/eCnt*100):0;
+    const sa=m.scoreA,sb=m.scoreB,winner=sa>sb?'🏆 A':sb>sa?'🏆 B':'🤝 Empate';
+    const ds=m.date?new Date(m.date+'T12:00').toLocaleDateString('es-AR',{weekday:'short',day:'numeric',month:'short'}):'';
+    const prog=`<div class="vp"><div class="vp-bar"><div class="vp-fill" style="width:${pct}%"></div></div><div class="vp-lbl">${vCnt}/${eCnt} votos</div></div>`;
+    if(!isElig){html+=`<div class="vote-card not-eligible"><div class="match-date">${ds} · ${winner}</div><div class="vote-score">${sa} -- ${sb}</div>${prog}<div style="font-size:12px;color:var(--muted);margin-top:8px">No participaste en este partido.</div></div>`;continue;}
+    if(voted){html+=`<div class="vote-card voted"><div class="match-date">${ds} · ${winner}</div><div style="display:flex;align-items:center;justify-content:space-between"><div class="vote-score">${sa} -- ${sb}</div><div style="color:var(--green);font-weight:600">✓ Ya votaste</div></div>${prog}</div>`;continue;}
+    const opts=elig.map(id=>`<option value="${id}">${pMap[id]||'?'}</option>`).join('');
+    html+=`<div class="vote-card"><div class="match-date">${ds} · ${winner}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div class="vote-score">${sa} -- ${sb}</div><div style="font-size:10px;color:var(--yellow);text-transform:uppercase;font-weight:700">Votación abierta</div></div>
+      ${prog}<hr class="divider">
+      <div class="form-group"><label class="form-label">🏅 MVP <span style="color:var(--yellow)">(+1 pto)</span></label><select id="vm-${m.id}" class="form-input"><option value="">-- Seleccioná</option>${opts}</select></div>
+      <div class="form-group"><label class="form-label">💩 Peor <span style="color:var(--red)">(-1 pto)</span></label><select id="vw-${m.id}" class="form-input"><option value="">-- Seleccioná</option>${opts}</select></div>
+      <div class="form-group"><label class="form-label">💬 Justificación anónima <span style="color:var(--muted)">(opcional)</span></label>
+        <textarea id="vj-${m.id}" class="form-input" placeholder="¿Por qué tu voto?" rows="3"></textarea>
+
+```
+    <div style="font-size:11px;color:var(--muted);margin-top:3px">🔒 Tu identidad no será revelada.</div>
+  </div>
+  <button class="btn btn-primary btn-full" id="vbtn-${m.id}" onclick="submitVote('${m.id}')">🗳️ Enviar voto</button>
+</div>`;
+```
+
+}
+con.innerHTML=html||`<div class="empty-state"><div class="empty-state-icon">✅</div><p>No tenés votaciones pendientes.</p></div>`;
+}
+
+window.submitVote=async function(mid){
+const pid=myPid(),mvp=document.getElementById('vm-'+mid)?.value,worst=document.getElementById('vw-'+mid)?.value;
+const just=document.getElementById('vj-'+mid)?.value?.trim()||'';
+if(!mvp||!worst){toast('Seleccioná MVP y peor jugador',true);return;}
+if(mvp===worst){toast('MVP y peor no pueden ser el mismo',true);return;}
+const btn=document.getElementById('vbtn-'+mid);if(btn){btn.disabled=true;btn.textContent='Enviando…';}
+try{
+await addDoc(collection(db,'votes'),{matchId:mid,voterId:pid,mvpVote:mvp,worstVote:worst,justification:just,createdAt:serverTimestamp()});
+const m=matches.find(x=>x.id===mid);if(m)await updateDoc(doc(db,'matches',mid),{voteCount:(m.voteCount||0)+1});
+toast('✓ Voto enviado -- ¡gracias!');updateVoteBadge();renderVoting();
+}catch(e){toast('Error al enviar',true);if(btn){btn.disabled=false;btn.textContent='🗳️ Enviar voto';}}
+};
+
+window.closeVoting=async function(mid){
+if(!confirm('¿Cerrar votación y aplicar resultados?'))return;
+try{
+const sn=await getDocs(query(collection(db,'votes'),where('matchId','==',mid)));
+const votes=sn.docs.map(d=>d.data());
+const mC={},wC={};votes.forEach(v=>{if(v.mvpVote)mC[v.mvpVote]=(mC[v.mvpVote]||0)+1;if(v.worstVote)wC[v.worstVote]=(wC[v.worstVote]||0)+1;});
+const maxM=Math.max(0,…Object.values(mC)),mvpRes=maxM>0?Object.keys(mC).filter(k=>mC[k]===maxM):[];
+const maxW=Math.max(0,…Object.values(wC)),worstRes=maxW>0?Object.keys(wC).find(k=>wC[k]===maxW):null;
+const justs=votes.filter(v=>v.justification).map(v=>({id:Math.random().toString(36).slice(2,8),text:v.justification}));
+await updateDoc(doc(db,'matches',mid),{votingOpen:false,votingClosed:true,mvpResult:mvpRes.length===1?mvpRes[0]:mvpRes,worstResult:worstRes||null,voteJustifications:justs,voteCount:votes.length});
+toast('✓ Votación cerrada');
+}catch(e){toast('Error',true);}
+};
+
+window.deleteComment=async function(matchId,justStr){
+if(!confirm('¿Eliminar este comentario?'))return;
+try{const jObj=JSON.parse(justStr);await updateDoc(doc(db,'matches',matchId),{voteJustifications:arrayRemove(jObj)});toast('✓ Eliminado');}
+catch(e){toast('Error',true);}
+};
+
+// ── NEWS (FIX #2: auto-generate, no button, Firebase stored) ──
+async function renderNews(){
+const con=document.getElementById('news-container');
+const pMap={};players.forEach(p=>pMap[p.id]=p.name);const ns=id=>pMap[id]||'?';
+const finished=[…matches].filter(m=>m.votingClosed||(m.date&&!m.votingOpen&&!m.votingClosed)).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+if(!finished.length){con.innerHTML=`<div class="empty-state"><div class="empty-state-icon">📰</div><p>Las noticias aparecen después de cada partido.</p></div>`;return;}
+
+// Render placeholders first, then fill
+con.innerHTML=finished.slice(0,6).map(m=>{
+const sa=m.scoreA,sb=m.scoreB;
+const ds=m.date?new Date(m.date+'T12:00').toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'}):'';
+const art=newsArticles[m.id];
+return `<div class="news-card" id="nc-${m.id}"> <div class="news-badge">${ds}</div> <div class="news-score">${sa} -- ${sb}</div> ${art?`<div class="news-article">${art}</div>`:`<div class="news-generating" id="ngen-${m.id}"><div class="news-gen-spinner"></div>Generando crónica…</div><div class="news-article" id="nart-${m.id}" style="display:none"></div>`} </div>`;
+}).join('');
+
+// Auto-generate missing articles
+for(const m of finished.slice(0,6)){
+if(!newsArticles[m.id]){await autoGenerateArticle(m,ns);}
+}
+}
+
+async function autoGenerateArticle(m,ns){
+const sa=m.scoreA,sb=m.scoreB;
+const res=sa>sb?`Victoria del Equipo A (${sa}-${sb})`:sb>sa?`Victoria del Equipo B (${sb}-${sa})`:`Empate (${sa}-${sb})`;
+const mvps=m.mvpResult?(Array.isArray(m.mvpResult)?m.mvpResult:[m.mvpResult]).map(ns).join(' y '):m.mvp?ns(m.mvp):null;
+const worst=m.worstResult?ns(m.worstResult):m.worst?ns(m.worst):null;
+const teamA=(m.teamA||[]).map(ns).join(', ')||'sin datos';
+const teamB=(m.teamB||[]).map(ns).join(', ')||'sin datos';
+const bench=(m.bench||[]).map(ns).join(', ');
+const ds=m.date?new Date(m.date+'T12:00').toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'}):'';
+
+const prompt=`Sos el cronista deportivo más gracioso y dramático de Argentina, especializado en fútbol 5 entre amigos. Escribí una crónica periodística MUY divertida y exagerada del siguiente partido. Usá humor ácido, referencias futboleras argentinas, apodos inventados, comparaciones absurdas y un tono mezcla entre Olé y Crónica para un torneo de barrio. Sé muy específico con los jugadores mencionados. No rompas personajes, mantené el drama futbolero.
+
+Datos:
+
+- Fecha: ${ds}
+- Resultado: ${res}
+- Equipo A: ${teamA}
+- Equipo B: ${teamB}
+  ${bench?`- Banco: ${bench}`:''}
+  ${mvps?`- MVP (votado por todos): ${mvps}`:''}
+  ${worst?`- Peor jugador (votado): ${worst}`:''}
+
+Escribí la crónica en 3-4 párrafos cortos, comenzando con un título dramático. Usá **nombre** para negritas. Sin markdown extra, solo texto con **negritas**. Máximo 220 palabras.`;
+
+try{
+if(!groqKey){throw new Error('No hay API key de Groq configurada.');}
+const resp=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${groqKey}`},body:JSON.stringify({model:'llama-3.3-70b-versatile',max_tokens:500,messages:[{role:'user',content:prompt}]})});
+const data=await resp.json();
+const text=data.choices?.[0]?.message?.content||'No se pudo generar la crónica.';
+const formatted=text.replace(/**([^*]+)**/g,'<strong>$1</strong>');
+// Save to Firebase
+await addDoc(collection(db,'news'),{matchId:m.id,article:formatted,createdAt:serverTimestamp()});
+newsArticles[m.id]=formatted;
+// Update DOM
+const genEl=document.getElementById('ngen-'+m.id);
+const artEl=document.getElementById('nart-'+m.id);
+if(genEl)genEl.style.display='none';
+if(artEl){artEl.innerHTML=formatted;artEl.style.display='block';}
+}catch(e){
+const genEl=document.getElementById('ngen-'+m.id);
+if(genEl)genEl.innerHTML='⚠️ Error al generar. Actualizá la página para reintentar.';
+}
+}
+
+// ── CHAT ───────────────────────────────────────────────────────
+const EMOJIS=['😂','🤣','😅','😎','🔥','💀','🏆','⚽','👑','💪','🙌','👏','😤','🤦','🎉','💩','🪄','😴','🤡','🫡','🥵','🤌','😈','💣','🦁','🐐','✅','❌','⚠️','🎯','💯','🤝','👍','❤️','💛','💚','🔥','⭐','🏅','🎊','😩','🤮','🧠','💅','🥶','😭','🫶','🤙','✌️','🫣','😏'];
+function buildEmojiPanel(){const el=document.getElementById('emoji-panel');if(el&&!el.dataset.built){el.innerHTML=EMOJIS.map(e=>`<button class="emoji-btn" onclick="insertEmoji('${e}')">${e}</button>`).join('');el.dataset.built='1';}}
+window.toggleEmoji=function(){buildEmojiPanel();document.getElementById('emoji-panel').classList.toggle('open');};
+window.insertEmoji=function(e){const inp=document.getElementById('chat-input');const pos=inp.selectionStart||inp.value.length;inp.value=inp.value.slice(0,pos)+e+inp.value.slice(pos);inp.focus();inp.selectionStart=inp.selectionEnd=pos+e.length;};
+document.getElementById('chat-input')?.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,95)+'px';});
+
+function renderChat(){
+const con=document.getElementById('chat-messages');
+if(!chatMsgs.length){con.innerHTML=`<div class="empty-state"><div class="empty-state-icon">💬</div><p>No hay mensajes.<br>¡Mandá el primero!</p></div>`;return;}
+const pid=myPid(),sorted=computeStats();
+let html='',lastDs='';
+chatMsgs.forEach(msg=>{
+const ds=fmtDate(msg.createdAt);
+if(ds!==lastDs){html+=`<div class="chat-date-sep">${ds}</div>`;lastDs=ds;}
+const isMine=(msg.authorId===pid)||(isAdmin()&&session?.type==='admin'&&msg.authorId==='admin');
+const side=isMine?'mine':'theirs';
+const canDel=isAdmin()||isMine;
+const delBtn=canDel?`<button class="chat-del-btn" onclick="deleteMsg('${msg.id}')" title="Eliminar">✕</button>`:'';
+const tt=!isMine?getPlayerTitle(msg.authorId,sorted):null;
+const ttHtml=tt?` <span class="player-title" style="font-size:9px">${tt.icon}</span>`:'';
+// Show nickname in chat if set
+const authorP=players.find(p=>p.id===msg.authorId);
+const displayName=authorP?.nickname?`${authorP.name} «${authorP.nickname}»`:msg.authorName||'?';
+const authorLine=!isMine?`<div class="chat-author-wrap"><span class="chat-author">${escH(displayName)}${ttHtml}</span></div>`:'';
+html+=`<div class="chat-msg ${side}">${authorLine}<div class="chat-bubble">${escH(msg.text)}</div><div class="chat-meta">${delBtn}<span>${fmtTime(msg.createdAt)}</span></div></div>`;
+});
+con.innerHTML=html;con.scrollTop=con.scrollHeight;
+}
+
+window.sendMsg=async function(){
+const inp=document.getElementById('chat-input');const text=inp.value.trim();if(!text)return;
+document.getElementById('emoji-panel').classList.remove('open');
+const btn=document.getElementById('chat-send-btn');btn.disabled=true;
+try{
+await addDoc(collection(db,'chat'),{text,authorId:isAdmin()&&session?.type==='admin'?'admin':myPid(),authorName:myName(),createdAt:serverTimestamp()});
+inp.value='';inp.style.height='auto';
+}catch(e){toast('Error al enviar',true);}
+finally{btn.disabled=false;inp.focus();}
+};
+window.deleteMsg=async function(id){if(!confirm('¿Eliminar?'))return;try{await deleteDoc(doc(db,'chat',id));}catch(e){toast('Error',true);}};
+
+// ── PROFILE (FIX #4: nickname) ─────────────────────────────────
+window.openProfileModal=function(){
+if(isAdmin()&&session?.type==='admin'){toast('El admin no tiene perfil de jugador.');return;}
+const pid=myPid();const p=players.find(x=>x.id===pid);
+const sorted=computeStats();const s=sorted.find(x=>x.id===pid);
+const tt=p?getPlayerTitle(pid,sorted):null;
+const achs=s?getAchievements(s):[];
+const statsHtml=s?`<div class="stat-mini" style="gap:5px;flex-wrap:wrap;margin-bottom:6px"> <span class="stat-pill"><strong>${s.pj}</strong> PJ</span> <span class="stat-pill ${s.pts<0?'danger':'good'}"><strong>${s.pts}</strong> pts</span> <span class="stat-pill good"><strong>${s.pg}</strong>G <strong>${s.pe}</strong>E <strong>${s.pp}</strong>D</span> ${s.mvp>0?`<span class="stat-pill warn"><strong>⭐${s.mvp}</strong> MVP</span>`:''} ${s.worst>0?`<span class="stat-pill danger"><strong>💩${s.worst}</strong> peor</span>`:''}
+
+  </div>
+  ${tt?`<div style="margin-bottom:6px"><span class="player-title" style="font-size:11px">${tt.icon} ${tt.label}</span></div>`:''}
+  ${achs.length?`<div class="stat-mini" style="gap:4px;flex-wrap:wrap">${achs.map(a=>`<span class="achievement-chip">${a.icon} ${a.label}</span>`).join('')}</div>`:''}`:
+  '<p style="color:var(--muted);font-size:13px">Aún no tenés estadísticas.</p>';
+  document.getElementById('profile-stats').innerHTML=statsHtml;
+  document.getElementById('profile-nickname').value=p?.nickname||'';
+  openModal('profile-modal');
+};
+window.saveProfile=async function(){
+  const pid=myPid();if(!pid)return;
+  const nick=document.getElementById('profile-nickname').value.trim();
+  try{
+    await updateDoc(doc(db,'players',pid),{nickname:nick||null});
+    closeModal('profile-modal');toast('✓ Perfil actualizado');
+    // Update header
+    const lbl=document.getElementById('user-lbl');const p=players.find(x=>x.id===pid);
+    if(lbl&&p)lbl.textContent=nick?`${p.name} «${nick}»`:p.name;
+  }catch(e){toast('Error al guardar',true);}
+};
+
+// ── MATCH FORM ─────────────────────────────────────────────────
+function buildAssignmentHtml(containerId,prefix,preselect){
+const rotIds=getRotIds(),sMap={};computeStats().forEach(s=>sMap[s.id]=s);
+if(!players.length)return'<p style="font-size:13px;color:var(--muted)">Primero agregá jugadores.</p>';
+return players.map(p=>{
+const s=sMap[p.id],isR=rotIds.includes(p.id),parts=[];
+if(isR)parts.push('🔄 ROTACIÓN');if(s?.absUnjust>=3&&!s.disqualified)parts.push(`⚠️ ${s.absUnjust} f.`);if(s?.disqualified)parts.push('❌');
+const preVal=preselect?preselect[p.id]||'':'';
+return `<div class="assign-row ${preVal?'status-'+preVal:''}" id="${prefix}row-${p.id}"><div style="flex:1;min-width:0"><div class="assign-name">${p.name}</div>${parts.length?`<div class="assign-sub">${parts.join(' · ')}</div>`:''}</div><select class="assign-select" data-prefix="${prefix}" data-pid="${p.id}" onchange="onAssignChange(this)"><option value="">-- Sin asignar</option><option value="A" ${preVal==='A'?'selected':''}>⚽ Equipo A</option><option value="B" ${preVal==='B'?'selected':''}>⚽ Equipo B</option><option value="bench" ${preVal==='bench'?'selected':''}>🪑 Banco (+1)</option><option value="absJust" ${preVal==='absJust'?'selected':''}>✅ Aus. just.</option><option value="absUnjust" ${preVal==='absUnjust'?'selected':''}>❌ Aus. injust.</option></select></div>`;
+}).join('');
+}
+window.onAssignChange=function(sel){const prefix=sel.dataset.prefix,pid=sel.dataset.pid,val=sel.value;const r=document.getElementById(prefix+'row-'+pid);r.className='assign-row'+(val?' status-'+val:'');};
+function collectAssignment(prefix){
+const tA=[],tB=[],bench=[],aJ=[],aU=[];
+document.querySelectorAll(`.assign-select[data-prefix="${prefix}"]`).forEach(s=>{const p=s.dataset.pid,v=s.value;if(v==='A')tA.push(p);else if(v==='B')tB.push(p);else if(v==='bench')bench.push(p);else if(v==='absJust')aJ.push(p);else if(v==='absUnjust')aU.push(p);});
+return{tA,tB,bench,aJ,aU};
+}
+function renderMatchForm(){
+const dEl=document.getElementById('match-date');if(!dEl.value)dEl.value=new Date().toISOString().split('T')[0];
+document.getElementById('player-assignment').innerHTML=buildAssignmentHtml('','main-',null);
+}
+
+window.saveMatch=async function(){
+const date=document.getElementById('match-date').value;
+const sa=parseInt(document.getElementById('score-a').value)||0,sb=parseInt(document.getElementById('score-b').value)||0;
+const {tA,tB,bench,aJ,aU}=collectAssignment('main-');
+const wEl=document.getElementById('match-warning'),warns=[];
+if(!date)warns.push('Fecha requerida.');if(!tA.length)warns.push('Equipo A vacío.');if(!tB.length)warns.push('Equipo B vacío.');
+if(warns.length){wEl.style.display='block';wEl.textContent=warns.join(' ');return;}wEl.style.display='none';
+const btn=document.getElementById('save-match-btn');btn.disabled=true;btn.textContent='Guardando…';
+try{
+await addDoc(collection(db,'matches'),{date,scoreA:sa,scoreB:sb,teamA:tA,teamB:tB,bench,absentJust:aJ,absentUnjust:aU,votingOpen:true,votingClosed:false,mvpResult:null,worstResult:null,voteJustifications:[],voteCount:0,createdAt:serverTimestamp()});
+document.getElementById('score-a').value=0;document.getElementById('score-b').value=0;document.getElementById('match-date').value='';
+document.querySelectorAll('.assign-select[data-prefix="main-"]').forEach(s=>{s.value='';document.getElementById('main-row-'+s.dataset.pid)?.setAttribute('class','assign-row');});
+toast('✓ Partido guardado -- ¡Votación abierta!');setTab('tabla');
+}catch(e){toast('Error al guardar',true);}
+finally{btn.disabled=false;btn.textContent='⚡ Guardar Partido';}
+};
+
+// ── EDIT MATCH (FIX #3) ────────────────────────────────────────
+window.openEditMatch=function(mid){
+const m=matches.find(x=>x.id===mid);if(!m)return;
+editingMatchId=mid;
+document.getElementById('edit-match-date').value=m.date||'';
+document.getElementById('edit-score-a').value=m.scoreA||0;
+document.getElementById('edit-score-b').value=m.scoreB||0;
+// Build preselect map
+const pre={};
+(m.teamA||[]).forEach(id=>pre[id]='A');
+(m.teamB||[]).forEach(id=>pre[id]='B');
+(m.bench||[]).forEach(id=>pre[id]='bench');
+(m.absentJust||[]).forEach(id=>pre[id]='absJust');
+(m.absentUnjust||[]).forEach(id=>pre[id]='absUnjust');
+document.getElementById('edit-player-assignment').innerHTML=buildAssignmentHtml('','edit-',pre);
+openModal('edit-match-modal');
+};
+
+window.saveEditMatch=async function(){
+const m=matches.find(x=>x.id===editingMatchId);if(!m)return;
+const date=document.getElementById('edit-match-date').value;
+const sa=parseInt(document.getElementById('edit-score-a').value)||0,sb=parseInt(document.getElementById('edit-score-b').value)||0;
+const {tA,tB,bench,aJ,aU}=collectAssignment('edit-');
+const warns=[];if(!date)warns.push('Fecha requerida.');if(!tA.length)warns.push('Equipo A vacío.');if(!tB.length)warns.push('Equipo B vacío.');
+if(warns.length){toast(warns.join(' '),true);return;}
+const btn=document.getElementById('edit-save-btn');btn.disabled=true;btn.textContent='Guardando…';
+try{
+await updateDoc(doc(db,'matches',editingMatchId),{date,scoreA:sa,scoreB:sb,teamA:tA,teamB:tB,bench,absentJust:aJ,absentUnjust:aU});
+closeModal('edit-match-modal');toast('✓ Partido actualizado');
+}catch(e){toast('Error al guardar',true);}
+finally{btn.disabled=false;btn.textContent='Guardar cambios';}
+};
+
+// ── WA GENERATOR ───────────────────────────────────────────────
+let waText='';
+window.openWaModal=function(){
+const pMap={};players.forEach(p=>pMap[p.id]=p.name);
+const sorted=computeStats().filter(s=>!s.disqualified&&s.pj>0);
+const rotIds=getRotIds();const rotNames=rotIds.map(id=>pMap[id]||'?');
+const lastMatch=matches.length?[…matches].sort((a,b)=>(b.date||'').localeCompare(a.date||''))[0]:null;
+const L=sorted[0];
+let msg='⚽ *TORNEO 2026 -- LIGA 5* ⚽\n';
+msg+='━━━━━━━━━━━━━━━━━━━━\n\n';
+msg+='📋 *PRÓXIMO PARTIDO*\n📅 Fecha: *completar*\n🕐 Hora: *completar*\n📍 Lugar: *completar*\n\n';
+if(rotNames.length)msg+=`🔄 *Rotación obligatoria:* ${rotNames.join(', ')}\n\n`;
+msg+='━━━━━━━━━━━━━━━━━━━━\n🏆 *TABLA ACTUAL*\n';
+sorted.slice(0,6).forEach((s,i)=>{const m=['🥇','🥈','🥉','4️⃣','5️⃣','6️⃣'][i]||`${i+1}.`;msg+=`${m} ${s.name} -- ${s.pts} pts\n`;});
+if(L)msg+=`\n👑 Líder: *${L.name}* con ${L.pts} puntos\n`;
+if(lastMatch){const sa=lastMatch.scoreA,sb=lastMatch.scoreB;const w=sa>sb?'Equipo A':sb>sa?'Equipo B':'Empate';msg+=`\n⚡ *Último resultado:* ${sa} -- ${sb} (${w})\n`;}
+msg+='\n━━━━━━━━━━━━━━━━━━━━\n_¡A confirmar asistencia!_ 🙋\n📲 App: *tu-url.netlify.app*';
+waText=msg;
+document.getElementById('wa-preview').textContent=msg;
+openModal('wa-modal');
+};
+window.copyWa=function(){navigator.clipboard.writeText(waText).then(()=>toast('✓ Copiado')).catch(()=>toast('No se pudo copiar',true));};
+
+// ── PLAYERS ────────────────────────────────────────────────────
+function renderPlayers(){
+const sMap={};computeStats().forEach(s=>sMap[s.id]=s);const sorted=computeStats();
+const el=document.getElementById('players-list');
+if(!players.length){el.innerHTML=`<div class="empty-state"><div class="empty-state-icon">👤</div><p>No hay jugadores todavía.</p></div>`;return;}
+el.innerHTML=players.map(p=>{
+const s=sMap[p.id]||{pj:0,pts:0,absUnjust:0,disqualified:false,mvp:0,worst:0,bench:0};
+const ac=s.absUnjust>=5?'danger':s.absUnjust>=3?'warn':'';
+const tt=getPlayerTitle(p.id,sorted);
+const achs=getAchievements(s);
+const isSa=adminIds.includes(p.id);
+const nickname=p.nickname?` <span style="color:var(--muted);font-size:11px">«${escH(p.nickname)}»</span>`:'';
+return `<div class="player-row" style="${s.disqualified?'opacity:.5':''}"> <div class="player-avatar">${getInits(p.name)}</div> <div style="flex:1;min-width:0"> <div style="font-weight:600;font-size:13px">${p.name}${nickname}${tt?` <span class="player-title">${tt.icon} ${tt.label}</span>`:''}${isSa?' <span class="player-title" style="background:rgba(245,197,24,.1);border-color:rgba(245,197,24,.3);color:var(--yellow)">👑 Admin</span>':''}</div> <div class="stat-mini"><span class="stat-pill"><strong>${s.pj}</strong> PJ</span><span class="stat-pill ${s.pts<0?'danger':'good'}"><strong>${s.pts}</strong> pts</span><span class="stat-pill" style="${p.pin?'color:var(--green)':'color:var(--yellow)'}">${p.pin?'🔑 OK':'⏳ Sin PIN'}</span><span class="stat-pill ${ac}"><strong>${s.absUnjust}</strong> AUI</span></div> ${achs.length?`<div class="stat-mini" style="margin-top:3px">${achs.slice(0,3).map(a=>`<span class="achievement-chip">${a.icon} ${a.label}</span>`).join('')}</div>`:''} </div> <div style="display:flex;gap:3px;flex-shrink:0"> <button class="btn btn-ghost btn-sm" onclick="toggleSubAdmin('${p.id}','${escH(p.name)}')" title="${isSa?'Quitar admin':'Hacer admin'}">${isSa?'👑':'⬆️'}</button> ${p.pin?`<button class="btn btn-ghost btn-sm" onclick="resetPin('${p.id}','${escH(p.name)}')" title="Resetear PIN">🔑</button>`:''} <button class="btn btn-danger btn-sm" onclick="openDelete('${p.id}','${escH(p.name)}')">✕</button> </div> </div>`;
+}).join('');
+}
+
+// ── HISTORY ────────────────────────────────────────────────────
+function renderHistory(){
+const el=document.getElementById('history-list');
+document.getElementById('total-matches-lbl').textContent=`${matches.length} partido${matches.length!==1?'s':''}`;
+if(!matches.length){el.innerHTML=`<div class="empty-state"><div class="empty-state-icon">📅</div><p>Aún no hay partidos.</p></div>`;return;}
+const pMap={};players.forEach(p=>pMap[p.id]=p.name);const ns=id=>pMap[id]||'?';
+el.innerHTML=[…matches].sort((a,b)=>(b.date||'').localeCompare(a.date||'')).map(m=>{
+const sa=m.scoreA,sb=m.scoreB,w=sa>sb?'🏆 A':sb>sa?'🏆 B':'🤝 Empate';
+const ds=m.date?new Date(m.date+'T12:00').toLocaleDateString('es-AR',{weekday:'short',day:'numeric',month:'short'}):'';
+// FIX #1: show MVP from both legacy and new fields in history
+const mvpDisplay=m.votingClosed
+?(m.mvpResult?(Array.isArray(m.mvpResult)?m.mvpResult:[m.mvpResult]).map(ns).join(', '):null)
+:(m.mvp?ns(m.mvp):null);
+const worstDisplay=m.votingClosed?(m.worstResult?ns(m.worstResult):null):(m.worst?ns(m.worst):null);
+const bN=(m.bench||[]).map(ns),aujN=(m.absentUnjust||[]).map(ns),ajN=(m.absentJust||[]).map(ns);
+const vs=m.votingClosed
+?`<span class="pill pill-vote">✓ ${m.voteCount||0} votos</span>`
+:m.votingOpen?`<span class="pill pill-pending">🗳️ Abierta · ${m.voteCount||0} votos</span>${isAdmin()?`<br><button class="btn btn-yellow btn-sm" style="margin-top:5px" onclick="closeVoting('${m.id}')">Cerrar votación</button>`:''}`:'';
+const vr=(mvpDisplay||worstDisplay)?`<div class="vr-grid">${mvpDisplay?`<div class="vr-item"><div class="vr-label">🏅 MVP</div><div style="font-weight:700;color:var(--yellow)">${mvpDisplay}</div></div>`:''}${worstDisplay?`<div class="vr-item"><div class="vr-label">💩 Peor</div><div style="font-weight:700;color:var(--red)">${worstDisplay}</div></div>`:''}</div>`:'';
+const justs=(m.voteJustifications||[]);
+const justsHtml=justs.length?`<div style="margin-top:9px"><div style="font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.4px;margin-bottom:4px">💬 Justificaciones anónimas (${justs.length})</div>${justs.map(j=>{const jObj=typeof j==='string'?{id:j,text:j}:j;const delBtn=isAdmin()?`<button class="just-del" onclick="deleteComment('${m.id}',${escH(JSON.stringify(jObj))})" title="Eliminar">✕</button>`:'';return`<div class="just-bubble"><div class="just-text">"${escH(jObj.text)}"</div>${delBtn}</div>`;}).join('')}</div>`:'';
+return `<div class="match-card ${m.votingOpen&&!m.votingClosed?'voting-open':''}"> <div class="match-date">${ds} · ${w}</div> <div class="match-score-row"><div class="mtn" style="color:var(--blue)">Equipo A</div><div class="msn" style="color:var(--blue)">${sa}</div><div class="mss">--</div><div class="msn" style="color:var(--orange)">${sb}</div><div class="mtn" style="color:var(--orange);text-align:right">Equipo B</div></div> <div class="mpd"><span style="color:var(--blue)">A:</span> ${(m.teamA||[]).map(ns).join(', ')||'--'}<br><span style="color:var(--orange)">B:</span> ${(m.teamB||[]).map(ns).join(', ')||'--'}</div> <div class="match-extras" style="margin-top:5px">${bN.length?`<span class="pill pill-bench">🪑 ${bN.join(', ')}</span>`:''}${aujN.length?`<span class="pill pill-abs">❌ ${aujN.join(', ')}</span>`:''}${ajN.length?`<span class="pill pill-just">✅ ${ajN.join(', ')}</span>`:''}${vs}</div> ${vr}${justsHtml} ${isAdmin()?`<div style="display:flex;gap:6px;margin-top:8px"><button class="btn btn-ghost btn-sm" onclick="openEditMatch('${m.id}')">✏️ Editar</button><button class="btn btn-danger btn-sm" onclick="deleteMatch('${m.id}')">🗑 Eliminar</button></div>`:''} </div>`;
+}).join('');
+}
+
+// ── CONFIG ─────────────────────────────────────────────────────
+function renderConfig(){
+document.getElementById('subadmin-list').innerHTML=players.map(p=>{const isSa=adminIds.includes(p.id);return`<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)"><span style="font-size:14px">${p.name}${isSa?' <span style="color:var(--yellow);font-size:11px">👑</span>':''}</span><button class="btn btn-sm ${isSa?'btn-danger':'btn-ghost'}" onclick="toggleSubAdmin('${p.id}','${escH(p.name)}')">${isSa?'Quitar':'Promover'}</button></div>`;}).join('')||`<p style="font-size:13px;color:var(--muted)">No hay jugadores.</p>`;
+document.getElementById('reset-pin-list').innerHTML=players.filter(p=>p.pin).map(p=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)"><span>${p.name}</span><button class="btn btn-ghost btn-sm" onclick="resetPin('${p.id}','${escH(p.name)}')">Resetear PIN</button></div>`).join('')||`<p style="font-size:13px;color:var(--muted)">No hay jugadores con PIN.</p>`;
+}
+
+// ── CRUD ───────────────────────────────────────────────────────
+window.openAddPlayer=function(){document.getElementById('new-player-name').value='';openModal('add-player-modal');setTimeout(()=>document.getElementById('new-player-name').focus(),100);};
+document.getElementById('new-player-name').addEventListener('keydown',e=>{if(e.key==='Enter')addPlayer();});
+window.addPlayer=async function(){
+const name=document.getElementById('new-player-name').value.trim();
+if(!name){toast('Ingresá un nombre',true);return;}if(players.length>=16){toast('Máximo 16',true);return;}
+if(players.some(p=>p.name.toLowerCase()===name.toLowerCase())){toast('Ya existe ese nombre',true);return;}
+try{await addDoc(collection(db,'players'),{name,pin:null,nickname:null,createdAt:serverTimestamp()});closeModal('add-player-modal');toast(`✓ ${name} agregado`);}
+catch(e){toast('Error',true);}
+};
+window.resetPin=async function(id,name){if(!confirm(`¿Resetear el PIN de ${name}?`))return;try{await updateDoc(doc(db,'players',id),{pin:null});toast(`✓ PIN de ${name} reseteado`);}catch(e){toast('Error',true);}};
+window.toggleSubAdmin=async function(id,name){const isSa=adminIds.includes(id);const newIds=isSa?adminIds.filter(x=>x!==id):[…adminIds,id];try{await updateDoc(doc(db,'settings','config'),{adminIds:newIds});adminIds=newIds;toast(isSa?`✓ ${name} ya no es admin`:`✓ ${name} es sub-admin ahora`);renderPlayers();if(currentTab==='config')renderConfig();}catch(e){toast('Error',true);}};
+let pendingDel=null;
+window.openDelete=function(id,name){pendingDel=id;document.getElementById('delete-name').textContent=name;openModal('delete-modal');};
+window.confirmDelete=async function(){try{await deleteDoc(doc(db,'players',pendingDel));closeModal('delete-modal');toast('Jugador eliminado');}catch(e){toast('Error',true);}};
+window.deleteMatch=async function(id){if(!confirm('¿Eliminar este partido?'))return;try{await deleteDoc(doc(db,'matches',id));const sn=await getDocs(query(collection(db,'votes'),where('matchId','==',id)));for(const d of sn.docs)await deleteDoc(d.ref);toast('Partido eliminado');}catch(e){toast('Error',true);}};
+window.changeAdminPin=async function(){const p=document.getElementById('new-admin-pin').value.trim();if(p.length<4){toast('Mínimo 4 dígitos',true);return;}try{await updateDoc(doc(db,'settings','config'),{adminPin:p});adminPin=p;document.getElementById('new-admin-pin').value='';toast('✓ PIN actualizado');}catch(e){toast('Error',true);}};
+
+document.querySelectorAll('.modal-overlay').forEach(el=>{el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');});});
+</script>
+
+</body>
+</html>
